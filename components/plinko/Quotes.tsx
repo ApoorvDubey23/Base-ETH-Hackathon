@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "./ui/Button";
+import { useRouter } from "next/router";
+import { Button } from "@/components/ui/button";
 
 export const Quotes = () => {
-  const navigate = useNavigate();
+  const router=useRouter();
   return (
     <div className="flex mx-16 flex-col justify-center pb-10 ">
       <h1 className="text-6xl font-bold">Play Plinko, Earn More!</h1>
@@ -14,7 +14,7 @@ export const Quotes = () => {
         multipliers ensuring this Stake Original game is suited for everyone at
         our online casino !
       </h3>
-      <Button className="hover:bg-green-600" onClick={() => navigate("/game")}>
+      <Button className="hover:bg-green-600" onClick={() => router.push("/plinko/game")}>
         Play Plinko
       </Button>
     </div>

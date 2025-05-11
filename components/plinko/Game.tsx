@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react"
-import { BallManager } from "../game/classes/BallManager";
 import axios from "axios";
+import { BallManager } from "@/utils/plinko/classes/BallManager";
 
 
 export function Game() {
     const [ballManager, setBallManager] = useState<BallManager>();
-    const canvasRef = useRef<any>();
+    const canvasRef = useRef<any>(null);
 
     useEffect(() => {
         if (canvasRef.current) {

@@ -1,11 +1,11 @@
+import { BallManager } from "@/utils/plinko/classes/BallManager";
+import { WIDTH } from "@/utils/plinko/constants";
+import { pad } from "@/utils/plinko/padding";
 import { useEffect, useRef, useState } from "react"
-import { BallManager } from "../game/classes/BallManager";
-import { WIDTH } from "../game/constants";
-import { pad } from "../game/padding";
 
 
 export function Simulation() {
-    const canvasRef = useRef<any>();
+    const canvasRef = useRef<any>(null);
     let [outputs, setOutputs] = useState<{[key: number]: number[]}>({
         0: [],
         1: [],

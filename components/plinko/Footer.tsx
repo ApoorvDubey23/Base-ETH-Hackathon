@@ -1,5 +1,5 @@
+import { Link } from "lucide-react";
 import { FaGithub, FaTwitter, FaYoutube } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -7,7 +7,7 @@ export const Footer = () => {
       <div className="w-[96%] max-w-screen-lg mx-auto flex flex-row justify-between">
         <div className="flex items-center">
           <Link
-            to="/"
+            href="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             {/* <img
