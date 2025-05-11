@@ -20,11 +20,11 @@ export default function Game() {
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center">
       <canvas ref={canvasRef} width="800" height="800"></canvas>
-      {/* 
+      
       <Button
         className="px-10 mb-4"
         onClick={async () => {
-          const response = await axios.post(`${baseURL}/game`, {
+          const response = await axios.post(`${baseURL}/api/plinko`, {
         data: 1,
           });
           if (ballManager) {
@@ -34,17 +34,8 @@ export default function Game() {
       >
         Add ball
       </Button>
-      */}
-      <Button
-        className="px-10 mb-4"
-        onClick={() => {
-          if (ballManager) {
-        ballManager.addBall(3942094.6698735086); // Default point for demo
-          }
-        }}
-      >
-        Add ball
-      </Button>
+     
+
     </div>
   );
 }
