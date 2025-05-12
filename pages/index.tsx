@@ -23,11 +23,15 @@ export default function HomePage() {
       <main className="my-8 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
         <HeroBanner />
         <FeaturedGames />
-        <PopularNow />
+        <div id="popular-now">
+          <PopularNow />
+        </div>
         <RecentWinners />
       </main>
 
-      <Footer />
+      <div id="footer">
+        <Footer />
+      </div>
     </div>
   );
 }

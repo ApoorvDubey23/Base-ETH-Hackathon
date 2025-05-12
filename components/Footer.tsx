@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/dice" className="hover:text-gray-800 dark:hover:text-white transition-colors">
+                <Link href="/Dicegame" className="hover:text-gray-800 dark:hover:text-white transition-colors">
                   Dice
                 </Link>
               </li>

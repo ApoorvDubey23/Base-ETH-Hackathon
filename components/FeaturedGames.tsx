@@ -20,7 +20,7 @@ const FeaturedGames: React.FC = () => {
       title: "Dice",
       description: "Roll the dice and predict the outcome for instant wins.",
       imageUrl: "/placeholder.svg",
-      link: "/dice"
+      link: "/Dicegame"
     },
     {
       title: "Mines",
