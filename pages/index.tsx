@@ -9,9 +9,9 @@ import './index.css';
 
 export default function HomePage() {
   return (
-    <div className="root">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       <Head>
-        <title>LuckyCasino - Online Casino Games</title>
+        <title>MetaBet - Online Casino Games</title>
         <meta
           name="description"
           content="Play exclusive casino games including Plinko, Limbo, Dice and more"
@@ -20,7 +20,7 @@ export default function HomePage() {
 
       <Header />
 
-      <main className="my-8">
+      <main className="my-8 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
         <HeroBanner />
         <FeaturedGames />
         <PopularNow />
