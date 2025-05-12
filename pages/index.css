@@ -1,0 +1,125 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    --background: 240 17% 12%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 19% 16%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 19% 16%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 255 92% 76%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 10% 24%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 240 19% 16%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 10% 24%;
+    --input: 240 10% 24%;
+    --ring: 240 10% 65%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 240 25% 12%;
+    --sidebar-foreground: 240 5% 90%;
+    --sidebar-primary: 255 92% 76%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 15% 20%;
+    --sidebar-accent-foreground: 240 5% 90%;
+    --sidebar-border: 240 15% 20%;
+    --sidebar-ring: 255 92% 76%;
+  }
+
+  body {
+    @apply font-sans text-foreground bg-background antialiased;
+    /* Example background gradient for a modern look */
+    background-image: radial-gradient(
+      circle at 50% 10%,
+      rgba(139, 92, 246, 0.15) 0%,
+      rgba(30, 27, 46, 0) 70%
+    );
+    background-size: cover;
+    background-attachment: fixed;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  .casino-card {
+    @apply relative bg-gradient-to-b from-card to-card/70 backdrop-blur-sm border border-purple-500/20 rounded-xl overflow-hidden;
+  }
+
+  .casino-card::before {
+    content: "";
+    @apply absolute inset-0 bg-card-shine bg-[length:200%_100%] animate-shine opacity-0 hover:opacity-100 transition-opacity duration-300;
+    pointer-events: none;
+  }
+
+  .game-button {
+    @apply bg-gradient-button bg-[length:200%_auto] hover:bg-[length:300%_auto] text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30;
+  }
+
+  .nav-link {
+    @apply relative text-muted-foreground hover:text-white transition-colors duration-200 px-3 py-2;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-casino-purple transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link.active {
+    @apply text-white;
+  }
+
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  .root {
+    @apply max-w-screen-xl mx-auto p-8;
+  }
+
+  /* Header styling */
+  .header {
+    @apply flex items-center justify-between py-4 border-b border-gray-200;
+  }
+
+  /* Footer styling */
+  .footer {
+    @apply text-center py-4 border-t border-gray-200 text-sm text-gray-400;
+  }
+
+  /* HeroBanner custom styles, if needed */
+  .hero-banner {
+    @apply relative flex flex-col items-center justify-center text-center py-16 bg-hero-pattern bg-cover bg-center rounded-xl;
+  }
+
+  /* Additional utilities */
+  .section-title {
+    @apply text-3xl font-bold text-primary mb-4;
+  }
+}
