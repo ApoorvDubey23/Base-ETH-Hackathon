@@ -55,7 +55,7 @@ const DiceGame: React.FC = () => {
 
         setTimeout(() => {
             updateGameStats(isWin, payout);
-            addToGameHistory(finalDiceValue, isWin, payout);
+            addToGameHistory(finalDiceValue, payout);
             setIsRolling(false);
         }, 500);
     };
@@ -92,7 +92,7 @@ const DiceGame: React.FC = () => {
         );
     };
 
-    const addToGameHistory = (diceValue: number, isWin: boolean, payout: number) => {
+    const addToGameHistory = (diceValue: number, payout: number) => {
         const historyItem: GameResult = {
             id: Date.now(),
             diceValue,

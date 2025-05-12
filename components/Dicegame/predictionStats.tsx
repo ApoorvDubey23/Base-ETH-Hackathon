@@ -47,7 +47,7 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
                     className={cn(
                         "flex-1 rounded-r-none border-r-0",
                         selectedPrediction === 'under'
-                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-500 dark:text-white"
                             : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                     )}
                     onClick={() => setSelectedPrediction('under')}
@@ -77,7 +77,7 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
                         variant="outline"
                         className={cn(
                             "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white border border-gray-300 dark:border-gray-600 text-lg font-medium p-0 h-12",
-                            selectedValue === value && "bg-blue-500 text-white"
+                            selectedValue === value && "bg-blue-500 text-white dark:bg-blue-700"
                         )}
                         onClick={() => handleValueChange(value)}
                         disabled={isRolling}

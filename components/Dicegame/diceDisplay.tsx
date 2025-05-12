@@ -26,7 +26,7 @@ const DiceDisplay: React.FC<DiceDisplayProps> = ({
     const iconProps = {
       size: iconSize,
       className: cn(
-        "text-gray-800 dark:text-gray-100 shadow-md dark:shadow-lg",
+        "dice-icon",
         rolling && "animate-dice-roll",
         className
       ),
@@ -53,9 +53,7 @@ const DiceDisplay: React.FC<DiceDisplayProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-center p-4 rounded-lg",
-        "bg-gray-100 dark:bg-gray-800",
-        "border border-gray-300 dark:border-gray-700",
+        "dice-container",
         rolling ? "animate-dice-roll" : "animate-scale-in",
         className
       )}

@@ -13,29 +13,29 @@ const GameStats: React.FC<GameStatsProps> = ({ balance, totalBets, totalWins, pr
 
     return (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-            <Card className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+            <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
                 <CardContent className="p-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Balance</p>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{balance.toFixed(2)}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Balance</p>
+                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{balance.toFixed(2)}</p>
                 </CardContent>
             </Card>
-            <Card className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+            <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
                 <CardContent className="p-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Bets</p>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{totalBets}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Bets</p>
+                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{totalBets}</p>
                 </CardContent>
             </Card>
-            <Card className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+            <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
                 <CardContent className="p-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Win Rate</p>
-                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">{winRate}%</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Win Rate</p>
+                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{winRate}%</p>
                 </CardContent>
             </Card>
-            <Card className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+            <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
                 <CardContent className="p-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Profit/Loss</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Profit/Loss</p>
                     <p
-                        className={`text-2xl font-semibold ${
+                        className={`text-2xl font-bold ${
                             profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                         }`}
                     >

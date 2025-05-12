@@ -29,16 +29,16 @@ const BetControls: React.FC<BetControlsProps> = ({
     };
 
     return (
-        <div className="flex flex-col space-y-6 w-full max-w-md p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="flex flex-col space-y-6 w-full max-w-md p-6 bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
                 <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bet Amount</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Bet Amount</p>
                     <div className="relative">
                         <Input
                             type="number"
                             value={betAmount}
                             onChange={handleInputChange}
-                            className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 pr-20 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 pr-20 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             min={1}
                             max={balance}
                             disabled={isRolling}
@@ -47,7 +47,7 @@ const BetControls: React.FC<BetControlsProps> = ({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 px-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                                className="h-8 px-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                 onClick={() => handleQuickBet(0.5)}
                                 disabled={isRolling}
                             >
@@ -56,7 +56,7 @@ const BetControls: React.FC<BetControlsProps> = ({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 px-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                                className="h-8 px-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                 onClick={() => handleQuickBet(2)}
                                 disabled={isRolling}
                             >
@@ -82,7 +82,7 @@ const BetControls: React.FC<BetControlsProps> = ({
                         }}
                         disabled={isRolling}
                         className={cn(
-                            "bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white border border-gray-300 dark:border-gray-600",
+                            "bg-gray-100 dark:bg-gray-800 hover:bg-blue-500 hover:text-white border border-gray-300 dark:border-gray-600 transition-colors",
                             value === betAmount && "bg-blue-500 text-white"
                         )}
                     >
@@ -94,7 +94,7 @@ const BetControls: React.FC<BetControlsProps> = ({
             <Button
                 onClick={onRoll}
                 disabled={isRolling || betAmount <= 0 || betAmount > balance}
-                className="w-full py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 rounded-md disabled:opacity-50"
+                className="w-full py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 rounded-md disabled:opacity-50 transition-all"
             >
                 {isRolling ? "Rolling..." : "Roll Dice"}
             </Button>

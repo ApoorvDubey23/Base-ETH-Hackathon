@@ -1,4 +1,4 @@
-import { FoundIssue, Quotes, Simulate } from "@/components/plinko";
+import { Quotes, Simulate } from "@/components/plinko";
 import { BallManager } from "@/utils/plinko/classes/BallManager";
 import { WIDTH } from "@/utils/plinko/constants";
 import { pad } from "@/utils/plinko/padding";
@@ -64,7 +64,6 @@ export default function Home() {
         <Simulate />
         <Quotes />
       </div>
-      <FoundIssue />
     </div>
   );
 }

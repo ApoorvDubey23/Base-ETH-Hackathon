@@ -28,31 +28,31 @@ const GameHistory: React.FC<GameHistoryProps> = ({ history }) => {
 
     return (
         <div className="w-full">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Game History
             </h3>
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-2">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md p-4">
                 {history.length === 0 ? (
                     <div className="flex items-center justify-center p-8 text-gray-500 dark:text-gray-400">
                         No games played yet
                     </div>
                 ) : (
                     <ScrollArea className="h-[280px]">
-                        <div className="space-y-2 p-2">
+                        <div className="space-y-3">
                             {history.map((result) => (
                                 <div
                                     key={result.id}
                                     className={cn(
-                                        "flex items-center justify-between p-4 rounded-lg transition-colors",
+                                        "flex items-center justify-between p-4 rounded-lg shadow-sm transition-colors",
                                         isWin(result)
-                                            ? "bg-green-100 dark:bg-green-900"
-                                            : "bg-red-100 dark:bg-red-900"
+                                            ? "bg-green-50 dark:bg-green-800"
+                                            : "bg-red-50 dark:bg-red-800"
                                     )}
                                 >
                                     <div className="flex items-center space-x-4">
                                         <DiceDisplay value={result.diceValue} size="sm" />
                                         <div>
-                                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                                 Roll {result.prediction === 'under' ? 'under' : 'over'}{' '}
                                                 {result.predictedValue}
                                             </p>
@@ -69,7 +69,7 @@ const GameHistory: React.FC<GameHistoryProps> = ({ history }) => {
                                                 : "text-red-600 dark:text-red-400"
                                         )}
                                     >
-                                        <p className="text-sm font-medium">
+                                        <p className="text-sm font-semibold">
                                             {isWin(result) ? '+' : '-'}
                                             {isWin(result) ? result.payout : result.betAmount}
                                         </p>
