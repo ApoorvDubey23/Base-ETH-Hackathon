@@ -37,6 +37,13 @@ export default function Game() {
       setBallManager(manager);
     }
   }, [theme]);
+  console.log(theme)
+  useEffect(() => {
+    if (canvasRef.current) {
+      const manager = new BallManager(canvasRef.current, theme as "dark" | "light");
+      setBallManager(manager);
+    }
+  }, [theme]);
 
   useEffect(() => {
     const fetchBalance = async () => {
