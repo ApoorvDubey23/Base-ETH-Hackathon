@@ -3,8 +3,10 @@ import { WIDTH } from "@/utils/plinko/constants";
 import { pad } from "@/utils/plinko/padding";
 import { useEffect, useRef, useState } from "react";
 
-
-export const Simulate = () => {
+interface SimulateProps {
+  theme: "light" | "dark";
+}
+export const Simulate = ({theme}:SimulateProps) => {
 
   const canvasRef = useRef<any>(null);
   let [outputs, setOutputs] = useState<{ [key: number]: number[] }>({
@@ -40,7 +42,7 @@ export const Simulate = () => {
   useEffect(() => {
     if (canvasRef.current) {
       const ballManager = new BallManager(
-        canvasRef.current as unknown as HTMLCanvasElement,
+        canvasRef.current as unknown as HTMLCanvasElement,theme,
         (index: number, startX?: number) => {
           setOutputs((outputs: any) => {
             return {

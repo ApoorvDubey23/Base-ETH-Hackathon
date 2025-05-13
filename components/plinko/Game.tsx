@@ -1,29 +1,39 @@
 import { useEffect, useRef, useState } from "react"
-import axios from "axios";
-import { BallManager } from "@/utils/plinko/classes/BallManager";
-
+import axios from "axios"
+import { BallManager } from "@/utils/plinko/classes/BallManager"
 
 export function Game() {
-    const [ballManager, setBallManager] = useState<BallManager>();
-    const canvasRef = useRef<any>(null);
+    const [ballManager, setBallManager] = useState<BallManager>()
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
         if (canvasRef.current) {
-            const ballManager = new BallManager(canvasRef.current as unknown as HTMLCanvasElement,)
-            setBallManager(ballManager)
+            const manager = new BallManager(canvasRef.current)
+            setBallManager(manager)
         }
-
-    }, [canvasRef])
+    }, [])
 
     return (
-        <div>
-            <canvas ref={canvasRef} width="800" height="800"></canvas>
-            <button onClick={async() => {
-                const response = await axios.post("http://localhost:3000/game", {data: 1});
-                if (ballManager) {
-                    ballManager.addBall(response.data.point);
-                }
-            }}>Add ball</button>
+        <div className="game-container light-theme">
+            <canvas
+                className="game-canvas"
+                ref={canvasRef}
+                width="800"
+                height="800"
+            />
+            <button
+                className="game-button"
+                onClick={async () => {
+                    const response = await axios.post("http://localhost:3000/game", {
+                        data: 1,
+                    })
+                    if (ballManager) {
+                        ballManager.addBall(response.data.point)
+                    }
+                }}
+            >
+                Add ball
+            </button>
         </div>
     )
 }

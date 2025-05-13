@@ -4,20 +4,22 @@ import { BallManager } from "@/utils/plinko/classes/BallManager";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import { ModeToggle } from "@/components/toggleTheme";
+import { useTheme } from "next-themes";
 
 export default function Game() {
   const baseURL = "http://localhost:3000";
   const [ballManager, setBallManager] = useState<BallManager>();
   const [reward, setReward] = useState<number | null>(null);
   const [multiplier, setMultiplier] = useState<number | null>(null);
-  const [wallet, setWallet] = useState<number>(100); 
-  const [betAmount, setBetAmount] = useState<number>(0.0001);   
+  const [wallet, setWallet] = useState<number>(100);
+  const [betAmount, setBetAmount] = useState<number>(0.0001);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
+  const {theme}=useTheme();
+  console.log(theme)
   useEffect(() => {
     if (canvasRef.current) {
-      const manager = new BallManager(canvasRef.current);
+      const manager = new BallManager(canvasRef.current,theme as "dark"||"light");
       setBallManager(manager);
     }
   }, [canvasRef]);
@@ -27,29 +29,23 @@ export default function Game() {
       alert("Please enter a valid bet amount.");
       return;
     }
-  
+
     if (wallet < betAmount) {
       alert("Insufficient balance!");
       return;
     }
-  
+
     try {
       const response = await axios.post(`${baseURL}/api/plinko`, { data: betAmount });
       const { point, reward: apiReward, multiplier: apiMultiplier } = response.data;
-  
+
       if (ballManager) {
-      ballManager.addBall(point);
-      
-      // Calculate the actual reward based on bet amount and multiplier
-      const parsedMultiplier = parseFloat(apiMultiplier) || 0;
-      const actualReward = betAmount * parsedMultiplier;
-      
-      setReward(actualReward);
-      setMultiplier(parsedMultiplier);
-  
-      // Update wallet balance with the actual reward
-      const newBalance = wallet - betAmount + actualReward;
-      setWallet(newBalance);
+        ballManager.addBall(point);
+        const parsedMultiplier = parseFloat(apiMultiplier) || 0;
+        const actualReward = betAmount * parsedMultiplier;
+        setReward(actualReward);
+        setMultiplier(parsedMultiplier);
+        setWallet(wallet - betAmount + actualReward);
       }
     } catch (error) {
       console.error("Error placing bet:", error);
@@ -64,26 +60,24 @@ export default function Game() {
 
   const adjustBet = (factor: number) => {
     const newBet = betAmount * factor;
-    setBetAmount(parseFloat(newBet.toFixed(8))); // Ensure precision
+    setBetAmount(parseFloat(newBet.toFixed(8)));
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-center min-h-screen p-6 gap-8 bg-gray-900 text-white">
+    <div className="flex flex-col lg:flex-row items-start justify-center min-h-screen p-6 gap-8 transition-colors duration-300 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-md z-10 flex items-center justify-between">
-  <h1 className="text-2xl font-bold text-center text-white">Plinko Game</h1>
-  <div className="flex items-center bg-gray-700 p-2 rounded-lg">
-    <h3 className="text-sm font-bold mr-2">Wallet:</h3>
-    <p className="text-sm">{wallet.toFixed(8)} BTC</p>
-  </div>
-</header>
-
- 
+      <header className="fixed top-0 left-0 w-full p-4 shadow-md z-10 flex items-center justify-between transition-colors duration-300 bg-gray-100 dark:bg-gray-800">
+        <h1 className="text-2xl font-bold">Plinko Game</h1>
+        <div className="flex items-center px-3 py-2 rounded-lg bg-gray-200 dark:bg-gray-700">
+          <h3 className="text-sm font-bold mr-2">Wallet:</h3>
+          <p className="text-sm">{wallet.toFixed(8)} BTC</p>
+        </div>
+        <ModeToggle />
+      </header>
 
       {/* Left Panel */}
-      <div className="w-full max-w-sm space-y-6 bg-gray-800 p-6 rounded-xl shadow-md mt-24 lg:mt-8">
+      <div className="w-full max-w-sm space-y-6 mt-24 lg:mt-8 p-6 rounded-xl shadow-lg transition-colors duration-300 bg-gray-100 dark:bg-gray-800">
         <h2 className="text-2xl font-bold mb-6 text-center">Plinko Game</h2>
-
         <div>
           <Label className="text-sm mb-2 block">Bet Amount</Label>
           <Input
@@ -112,41 +106,41 @@ export default function Game() {
 
         {reward !== null && (
           <div
-            className={`mt-6 p-4 rounded-lg text-center ${
-              multiplier && multiplier > 1 
-                ? "bg-green-700" 
-                : multiplier === 1 
-                  ? "bg-orange-600" // Orange background for 1x multiplier
-                  : "bg-red-700"
+            className={`mt-6 p-4 rounded-lg text-center transition-colors duration-300 ${
+              multiplier && multiplier > 1
+                ? "bg-green-600"
+                : multiplier === 1
+                ? "bg-orange-500"
+                : "bg-red-600"
             }`}
           >
             <h3 className="text-lg font-bold">
-              {multiplier && multiplier > 1 
-                ? "Congratulations!" 
-                : multiplier === 1 
-                  ? "Not Win, Not Lose" // Special message for 1x multiplier
-                  : "Better Luck Next Time!"}
+              {multiplier && multiplier > 1
+                ? "Congratulations!"
+                : multiplier === 1
+                ? "Not Win, Not Lose"
+                : "Better Luck Next Time!"}
             </h3>
             <p className="text-sm">
-              {multiplier && multiplier > 1 
+              {multiplier && multiplier > 1
                 ? `You won: ${reward.toFixed(8)} BTC`
                 : multiplier === 1
-                  ? "Better luck next time!" // Message for 1x multiplier
-                  : typeof reward === "number"
-                    ? `You lost: ${Math.abs(reward).toFixed(8)} BTC`
-                    : ""}
+                ? "Better luck next time!"
+                : typeof reward === "number"
+                ? `You lost: ${Math.abs(reward).toFixed(8)} BTC`
+                : ""}
             </p>
           </div>
         )}
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center mt-24 lg:mt-8">
         <canvas
           ref={canvasRef}
           width="800"
           height="800"
-          className="rounded-md shadow-lg border border-gray-700 bg-gray-800"
+          className="rounded-md shadow-lg border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-700"
         ></canvas>
       </div>
     </div>
