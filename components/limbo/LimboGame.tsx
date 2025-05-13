@@ -42,9 +42,7 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
     setTargetMultiplier(value);
   };
 
-  const generateRandomMultiplier = () => {
-    return Math.random() * 20 + 1;
-  };
+  const generateRandomMultiplier = () => Math.random() * 20 + 1;
 
   const handlePlay = () => {
     if (betAmount <= 0) {
@@ -93,14 +91,14 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
       <main className="max-w-5xl w-full mx-auto px-6 py-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Bet Controls */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Bet Amount</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Bet Amount</h2>
                 <div className="flex items-center space-x-3">
                   <Input
                     type="number"
@@ -109,18 +107,18 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
                     max={balance}
                     value={betAmount}
                     onChange={handleBetAmountChange}
-                    className="flex-grow bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="flex-grow bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                   <span className="text-indigo-600 dark:text-indigo-400 font-medium">ETH</span>
                 </div>
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-between mt-4 bg">
                   {[25, 50, 75, 100].map((pct) => (
                     <Button
                       key={pct}
                       variant="outline"
                       size="sm"
                       onClick={() => handleQuickSetAmount(pct)}
-                      className="text-xs border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      className="text-xs border-gray-300 dark:border-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 bg-gray-200"
                     >
                       {pct}%
                     </Button>
@@ -129,11 +127,11 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
               </div>
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Target Multiplier</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Target Multiplier</h2>
                   <span className="text-sm text-gray-600 dark:text-gray-400">Win Chance: {winChance}%</span>
                 </div>
-                <p className="mb-2 text-md text-gray-800 dark:text-gray-100">
-                  Current Multiplier: {targetMultiplier.toFixed(2)}x
+                <p className="mb-2 text-md">
+                  Current Multiplier: <span className="font-semibold">{targetMultiplier.toFixed(2)}x</span>
                 </p>
                 <div className="mb-5">
                   <Slider
@@ -151,15 +149,16 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
                 </div>
                 <div className="grid grid-cols-5 gap-3">
                   {[1.5, 2, 5, 10, 20].map((value) => (
-                    <Button
-                      key={value}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickSetMultiplier(value)}
-                      className="text-xs border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    >
-                      {value}x
-                    </Button>
+                  <Button
+                    key={value}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickSetMultiplier(value)}
+                    className="text-xs border-gray-300 dark:border-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 bg-gray-200"
+
+                  >
+                    {value}x
+                  </Button>
                   ))}
                 </div>
               </div>
@@ -174,19 +173,19 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
               </div>
             </div>
             {/* Result View */}
-            <div className="relative flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-8 shadow-inner min-h-[300px]">
+            <div className="relative flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-8 shadow-inner min-h-[300px]">
               {rollResult === null ? (
                 <div className="text-center">
                   {isRolling ? (
                     <div className="space-y-5">
-                      <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 animate-pulse">
+                      <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 animate-pulse">
                         Rolling...
                       </div>
                       <div className="h-20 w-20 border-4 border-t-indigo-600 border-gray-300 dark:border-gray-500 rounded-full animate-spin mx-auto"></div>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                      <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                         Place Your Bet
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -205,17 +204,25 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
                 </div>
               ) : (
                 <div className="text-center">
-                  <h3 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Roll Result</h3>
-                  <div className={`text-6xl font-bold mb-4 ${rollResult >= targetMultiplier ? 'text-green-500' : 'text-red-500'}`}>
+                  <h3 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Roll Result</h3>
+                  <div
+                    className={`text-6xl font-bold mb-4 ${
+                      rollResult >= targetMultiplier ? 'text-green-500' : 'text-red-500'
+                    }`}
+                  >
                     {rollResult.toFixed(2)}x
                   </div>
-                  <p className={`text-lg ${rollResult >= targetMultiplier ? 'text-green-500' : 'text-red-500'}`}>
+                  <p
+                    className={`text-lg ${
+                      rollResult >= targetMultiplier ? 'text-green-500' : 'text-red-500'
+                    }`}
+                  >
                     {resultMessage}
                   </p>
                   <Button
                     onClick={() => setRollResult(null)}
                     variant="outline"
-                    className="mt-6 text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="mt-6 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     New Bet
                   </Button>
