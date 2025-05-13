@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import GameNav from "./GameNav";
-import BetHistory, { BetRecord } from "./BetHistory";
+import GameNav from "../components/limbo/GameNav";
+import BetHistory, { BetRecord } from "../components/limbo/BetHistory";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 

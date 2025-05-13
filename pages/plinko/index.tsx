@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import { Quotes, Simulate } from "@/components/plinko";
 import { BallManager } from "@/utils/plinko/classes/BallManager";
 import { WIDTH } from "@/utils/plinko/constants";
@@ -60,10 +62,12 @@ export default function Home() {
 
   return (
     <div className="">
+      <Header />
       <div className="flex flex-col lg:flex-row  items-center justify-between ">
         <Simulate />
         <Quotes />
       </div>
+      <Footer />
     </div>
   );
 }

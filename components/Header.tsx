@@ -10,9 +10,9 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <div className="flex items-center space-x-2">
           <Dices className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-          <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
             MetaBet
-          </span>
+          </Link>
         </div>
 
         <nav className="hidden md:flex items-center space-x-4">

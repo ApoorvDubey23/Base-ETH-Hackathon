@@ -1,10 +1,14 @@
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
+import { CardFooter } from "../ui/card";
+import Footer from "../Footer";
+import Header from "../Header";
 
 export const Quotes = () => {
   const router=useRouter();
   return (
     <div className="flex mx-16 flex-col justify-center pb-10 ">
+
       <h1 className="text-6xl font-bold">Play Plinko, Earn More!</h1>
       <h3 className="mt-4 text-xl mb-4">
         Plinko lets players drop a ball from the top of our triangular pin
@@ -17,6 +21,7 @@ export const Quotes = () => {
       <Button className="hover:bg-green-600" onClick={() => router.push("/plinko/game")}>
         Play Plinko
       </Button>
+
     </div>
   );
 };
