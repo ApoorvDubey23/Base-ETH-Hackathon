@@ -41,15 +41,16 @@ const Index = () => {
     setBetHistory(prev => [record, ...prev.slice(0, 49)]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <Header />
-      <div className="max-w-7xl mx-auto">
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <GameNav balance={balance} />
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Limbo Game</h1>
-          <p className="text-muted-foreground">
+        <div className="mb-6 text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+            Limbo Game
+          </h1>
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
             Predict a multiplier and win big if the roll is higher!
           </p>
         </div>

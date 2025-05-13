@@ -1,5 +1,5 @@
 import React from 'react';
-import Index from '@/components/limbo/Index'; // This file contains your game UI (GameNav, LimboGame, BetHistory)
+import Index from '@/components/limbo/Index';
 
 const LimboPage: React.FC = () => {
   return <Index />;
