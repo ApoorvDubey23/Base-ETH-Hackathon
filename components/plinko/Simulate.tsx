@@ -58,7 +58,7 @@ export const Simulate = ({theme}:SimulateProps) => {
         ballManager.stop();
       };
     }
-  }, [canvasRef]);
+  }, [canvasRef,theme]);
 
   return (
     <div className="flex flex-col items-center justify-center">

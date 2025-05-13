@@ -15,7 +15,14 @@ export default function Game() {
   const [wallet, setWallet] = useState<number>(100);
   const [betAmount, setBetAmount] = useState<number>(0.0001);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const {theme}=useTheme();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const manager = new BallManager(canvasRef.current, theme as "dark" | "light");
+      setBallManager(manager);
+    }
+  }, [theme]);
   console.log(theme)
   useEffect(() => {
     if (canvasRef.current) {

@@ -42,7 +42,20 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
     setTargetMultiplier(value);
   };
 
-  const generateRandomMultiplier = () => Math.random() * 20 + 1;
+  const generateRandomMultiplier = () => {
+  const lowerBound = 0.5 * targetMultiplier;
+  let randFactor: number;
+  if (targetMultiplier <= 30) {
+
+    randFactor = Math.random() * (2 - 0.5) + 0.5;
+  } else {
+
+    randFactor = Math.random() * (1.5 - 0.5) + 0.5;
+  }
+  const X = targetMultiplier * randFactor;
+  const result = Math.random() * (X - lowerBound) + lowerBound;
+  return result;
+};
 
   const handlePlay = () => {
     if (betAmount <= 0) {
@@ -57,7 +70,6 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
     setRollResult(null);
     setResultMessage('');
 
-    // Deduct bet amount immediately
     const newBalance = balance - betAmount;
     onBalanceChange(newBalance);
 
