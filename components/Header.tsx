@@ -1,3 +1,4 @@
+import { WalletComponents } from './ConnectWallet';
 import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -32,15 +33,7 @@ const Header: React.FC = () => {
 
         <div className="flex items-center space-x-2">
           <ModeToggle />
-          <Button
-            variant="outline"
-            className="border-gray-300 dark:border-gray-700 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            Sign In
-          </Button>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-            Register
-          </Button>
+          <WalletComponents />
         </div>
       </div>
     </header>
