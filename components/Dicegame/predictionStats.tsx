@@ -27,16 +27,36 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
     };
 
     const calculateWinChance = () => {
+        // Still showing win chance based on dice probabilities
         if (selectedPrediction === 'under') {
-            return Math.round((selectedValue / 6) * 100);
+            return Math.max(1, Math.round(((selectedValue - 1) / 6) * 100));
         } else {
-            return Math.round(((7 - selectedValue) / 6) * 100);
+            return Math.max(1, Math.round(((6 - selectedValue) / 6) * 100));
         }
     };
-
+    
     const calculateMultiplier = () => {
-        const winChance = calculateWinChance() / 100;
-        return winChance > 0 ? (0.97 / winChance).toFixed(2) : '0.00';
+        if (selectedPrediction === 'under') {
+            const mapping: Record<DiceValueOption, number> = {
+                1: 100,
+                2: 2,
+                3: 1.75,
+                4: 1.2,
+                5: 1.0,
+                6: 0.5,
+            };
+            return mapping[selectedValue].toFixed(2);
+        } else {
+            const mapping: Record<DiceValueOption, number> = {
+                1: 0.5,
+                2: 1.0,
+                3: 1.2,
+                4: 1.75,
+                5: 2,
+                6: 100,
+            };
+            return mapping[selectedValue].toFixed(2);
+        }
     };
 
     return (

@@ -4,25 +4,25 @@ import cors from "cors";
 import { outcomes } from "@/utils/plinko/outcomes";
 
 const TOTAL_DROPS = 16;
-const MULTIPLIERS: {[ key: number ]: number} = {
-    0: 16,
-    1: 9,
-    2: 2,
-    3: 1.4,
-    4: 1.4,
-    5: 1.2,
-    6: 1.1,
-    7: 1,
-    8: 0.5,
-    9: 1,
-    10: 1.1,
-    11: 1.2,
-    12: 1.4,
-    13: 1.4,
-    14: 2,
-    15: 9,
-    16: 16
-}
+const MULTIPLIERS: { [key: number]: number } = {
+  1: 5,
+  2: 2,
+  3: 1.5,
+  4: 1.2,
+  5: 1,
+  6: 0.8,
+  7: 0.5,
+  8: 0.3,
+  9: 0,
+  10: 0.3,
+  11: 0.5,
+  12: 0.8,
+  13: 1,
+  14: 1.2,
+  15: 1.5,
+  16: 2,
+  17: 5,
+};
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(cors());

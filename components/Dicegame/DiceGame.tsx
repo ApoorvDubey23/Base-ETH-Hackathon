@@ -2,21 +2,37 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import DiceDisplay from './diceDisplay';
 import BetControls from './betControls';
-import PredictionSelector, { PredictionType, DiceValueOption } from './predictionStats';
 import GameHistory, { GameResult } from './gameHistory';
 import GameStats from './gameStats';
+import PredictionSelector from './predictionStats';
 
 const DiceGame: React.FC = () => {
     const [balance, setBalance] = useState(1000);
     const [betAmount, setBetAmount] = useState(10);
-    const [prediction, setPrediction] = useState<PredictionType>('under');
-    const [selectedValue, setSelectedValue] = useState<DiceValueOption>(4);
+    const [prediction, setPrediction] = useState<'under' | 'over'>('under');
+    const [selectedValue, setSelectedValue] = useState<1 | 2 | 3 | 4 | 5 | 6>(4);
     const [diceValue, setDiceValue] = useState<number>(1);
     const [isRolling, setIsRolling] = useState(false);
     const [gameHistory, setGameHistory] = useState<GameResult[]>([]);
     const [totalBets, setTotalBets] = useState(0);
     const [totalWins, setTotalWins] = useState(0);
     const [profit, setProfit] = useState(0);
+
+    const calculateWinChance = (): number => {
+        if (prediction === 'under') {
+            return Math.max(1, Math.round(((selectedValue - 1) / 6) * 100));
+        } else {
+            return Math.max(1, Math.round(((6 - selectedValue) / 6) * 100));
+        }
+    };
+
+    const calculateMultiplier = (): string => {
+        const mapping: Record<1 | 2 | 3 | 4 | 5 | 6, number> = prediction === 'under'
+            ? { 1: 100, 2: 2, 3: 1.75, 4: 1.2, 5: 1.0, 6: 0.5 }
+            : { 1: 0.5, 2: 1.0, 3: 1.2, 4: 1.75, 5: 2, 6: 100 };
+
+        return mapping[selectedValue].toFixed(2);
+    };
 
     const rollDice = () => {
         if (betAmount <= 0) {
@@ -30,9 +46,9 @@ const DiceGame: React.FC = () => {
         }
 
         setIsRolling(true);
-        setBalance((prev) => prev - betAmount); // Deduct bet amount immediately
+        setBalance((prev) => prev - betAmount);
 
-        const rollDuration = 1500; // Duration of dice rolling animation
+        const rollDuration = 1500;
         const startTime = Date.now();
 
         const rollInterval = setInterval(() => {
@@ -73,7 +89,8 @@ const DiceGame: React.FC = () => {
             ? (selectedValue - 1) / 6
             : (6 - selectedValue) / 6;
 
-        const multiplier = winChance > 0 ? 0.97 / winChance : 0;
+        const houseEdge = 0.001;
+        const multiplier = (1 / winChance) * (1 - houseEdge);
         return Math.floor(betAmount * multiplier * 100) / 100;
     };
 
@@ -103,7 +120,7 @@ const DiceGame: React.FC = () => {
             timestamp: new Date(),
         };
 
-        setGameHistory((prev) => [historyItem, ...prev.slice(0, 19)]); // Limit history to 20 items
+        setGameHistory((prev) => [historyItem, ...prev.slice(0, 19)]);
     };
 
     return (

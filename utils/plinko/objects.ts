@@ -15,25 +15,25 @@ export interface Sink {
     multiplier?: number;
 }
 
-const MULTIPLIERS: {[ key: number ]: number} = {
-    1: 16,
-    2: 9,
-    3: 2,
-    4: 1.4,
-    5: 1.4,
-    6: 1.2,
-    7: 1.1,
-    8: 1,
-    9: 0.5,
-    10: 1,
-    11: 1.1,
-    12: 1.2,
-    13: 1.4,
-    14: 1.4,
-    15: 2,
-    16: 9,
-    17: 16
-}
+const MULTIPLIERS: { [key: number]: number } = {
+    1: 5,
+    2: 2,
+    3: 1.5,
+    4: 1.2,
+    5: 1,
+    6: 0.8,
+    7: 0.5,
+    8: 0.3,
+    9: 0,
+    10: 0.3,
+    11: 0.5,
+    12: 0.8,
+    13: 1,
+    14: 1.2,
+    15: 1.5,
+    16: 2,
+    17: 5,
+};
 
 export const createObstacles = (): Obstacle[] => {
     const obstacles: Obstacle[] = [];
