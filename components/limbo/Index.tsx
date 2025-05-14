@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import GameNav from './GameNav';
 import LimboGame from './LimboGame';
 import BetHistory, { BetRecord } from './BetHistory';
 
@@ -44,7 +43,6 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <GameNav balance={balance} />
 
         <div className="mb-6 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">

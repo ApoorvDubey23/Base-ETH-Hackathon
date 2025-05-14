@@ -5,11 +5,10 @@ import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useStakeGameFunctions } from "@/ContractFunctions/functions";
-import { WalletComponents } from "@/components/ConnectWallet";
 import { ethers } from "ethers";
 import { CONTRACT_ABI } from "@/lib/contract";
-import { ModeToggle } from "@/components/toggleTheme";
 import { useTheme } from "next-themes";
+import Header from "@/components/Header";
 
 export default function Game() {
   const {
@@ -31,13 +30,6 @@ export default function Game() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
 
-  useEffect(() => {
-    if (canvasRef.current) {
-      const manager = new BallManager(canvasRef.current, theme as "dark" | "light");
-      setBallManager(manager);
-    }
-  }, [theme]);
-  console.log(theme)
   useEffect(() => {
     if (canvasRef.current) {
       const manager = new BallManager(canvasRef.current, theme as "dark" | "light");
@@ -160,92 +152,90 @@ export default function Game() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-center min-h-screen p-6 gap-8 bg-gray-900 text-white">
-      <header className="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-md z-10 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Plinko Game</h1>
-        <div className="flex items-center bg-gray-700 p-2 rounded-lg">
-          <h3 className="text-sm font-bold mr-2">Balance: {balance}</h3>
-          <h3 className="text-sm font-bold mr-2">Wallet:</h3>
-          <WalletComponents />
-        </div>
-      </header>
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500">
+      <Header />
+      <div className="flex flex-col lg:flex-row items-start justify-center px-8 gap-10">
+        <div className="w-full max-w-sm space-y-6 bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg mt-8 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-3xl font-bold mb-6 text-center">Plinko Game</h2>
 
-      <div className="w-full max-w-sm space-y-6 bg-gray-800 p-6 rounded-xl shadow-md mt-24 lg:mt-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">Plinko Game</h2>
-
-        <div>
-          <Label className="text-sm mb-2 block">Bet Amount (ETH)</Label>
-          <Input
-            type="number"
-            value={betAmount}
-            onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
-            placeholder="0.0001 ETH"
-            className="mb-4"
-          />
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setBetAmount(betAmount * 0.5)}>/2</Button>
-            <Button variant="secondary" onClick={() => setBetAmount(betAmount * 2)}>x2</Button>
+          <div>
+            <Label className="text-sm mb-2 block">Bet Amount (ETH)</Label>
+            <Input
+              type="number"
+              value={betAmount}
+              onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
+              placeholder="0.0001 ETH"
+              className="mb-4 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <div className="flex gap-3">
+              <Button variant="secondary" onClick={() => setBetAmount(betAmount * 0.5)} className="flex-1">
+                /2
+              </Button>
+              <Button variant="secondary" onClick={() => setBetAmount(betAmount * 2)} className="flex-1">
+                x2
+              </Button>
+            </div>
           </div>
+
+          {sessionId !== null ? (
+            <Button
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md"
+              onClick={startGame}
+            >
+              Start Game
+            </Button>
+          ) : (
+            <Button
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md"
+              onClick={handlePlaceBet}
+            >
+              Place Bet
+            </Button>
+          )}
+
+          <Button
+            className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md"
+            onClick={handleWithdraw}
+          >
+            Withdraw
+          </Button>
+
+          {reward !== null && (
+            <div
+              className={`mt-6 p-4 rounded-lg text-center transition ${
+                multiplier && multiplier > 10
+                  ? "bg-green-500 dark:bg-green-600"
+                  : multiplier === 10
+                  ? "bg-yellow-500 dark:bg-yellow-600"
+                  : "bg-red-500 dark:bg-red-600"
+              }`}
+            >
+              <h3 className="text-xl font-bold">
+                {multiplier && multiplier > 10
+                  ? "Congratulations!"
+                  : multiplier === 10
+                  ? "Break Even"
+                  : "Better Luck Next Time!"}
+              </h3>
+              <p className="text-sm mt-1">
+                {multiplier && multiplier > 10
+                  ? `You won: ${reward.toFixed(8)} ETH`
+                  : multiplier === 10
+                  ? "You broke even."
+                  : `You left with: ${reward.toFixed(8)} ETH`}
+              </p>
+            </div>
+          )}
         </div>
 
-        {sessionId !== null ? (
-          <Button
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-            onClick={startGame}
-          >
-            Start Game
-          </Button>
-        ) : (
-          <Button
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-            onClick={handlePlaceBet}
-          >
-            Place Bet
-          </Button>
-        )}
-
-        <Button
-          className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold"
-          onClick={handleWithdraw}
-        >
-          Withdraw
-        </Button>
-
-        {reward !== null && (
-          <div
-            className={`mt-6 p-4 rounded-lg text-center ${
-              multiplier && multiplier > 10
-                ? "bg-green-700"
-                : multiplier === 10
-                ? "bg-orange-600"
-                : "bg-red-700"
-            }`}
-          >
-            <h3 className="text-lg font-bold">
-              {multiplier && multiplier > 10
-                ? "Congratulations!"
-                : multiplier === 10
-                ? "Not Win, Not Lose"
-                : "Better Luck Next Time!"}
-            </h3>
-            <p className="text-sm">
-              {multiplier && multiplier > 10
-                ? `You won: ${reward.toFixed(8)} ETH`
-                : multiplier === 10
-                ? "Broke even."
-                : `You left with: ${reward.toFixed(8)} ETH`}
-            </p>
-          </div>
-        )}
-      </div>
-
-      <div className="flex-1 flex items-center justify-center mt-24 lg:mt-8">
-        <canvas
-          ref={canvasRef}
-          width="800"
-          height="800"
-          className="rounded-md shadow-lg border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-700"
-        ></canvas>
+        <div className="flex-1 flex items-center justify-center mt-8">
+          <canvas
+            ref={canvasRef}
+            width="800"
+            height="800"
+            className="rounded-md shadow-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 transition-colors"
+          ></canvas>
+        </div>
       </div>
     </div>
   );
