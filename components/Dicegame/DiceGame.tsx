@@ -17,6 +17,7 @@ const DiceGame: React.FC = () => {
     const [totalBets, setTotalBets] = useState(0);
     const [totalWins, setTotalWins] = useState(0);
     const [profit, setProfit] = useState(0);
+    const [cashoutAvailable, setCashoutAvailable] = useState(false);
 
     const calculateWinChance = (): number => {
         if (prediction === 'under') {
@@ -46,6 +47,7 @@ const DiceGame: React.FC = () => {
         }
 
         setIsRolling(true);
+        setCashoutAvailable(true);
         setBalance((prev) => prev - betAmount);
 
         const rollDuration = 1500;
@@ -73,13 +75,14 @@ const DiceGame: React.FC = () => {
             updateGameStats(isWin, payout);
             addToGameHistory(finalDiceValue, payout);
             setIsRolling(false);
+            setCashoutAvailable(false);
         }, 500);
     };
 
     const checkWinCondition = (diceValue: number): boolean => {
-        return prediction === 'under'
-            ? diceValue < selectedValue
-            : diceValue > selectedValue;
+        return prediction === 'over'
+            ? diceValue > selectedValue
+            : diceValue < selectedValue;
     };
 
     const calculatePayout = (isWin: boolean): number => {
@@ -89,9 +92,23 @@ const DiceGame: React.FC = () => {
             ? (selectedValue - 1) / 6
             : (6 - selectedValue) / 6;
 
-        const houseEdge = 0.001;
+        const houseEdge = 0.35;
         const multiplier = (1 / winChance) * (1 - houseEdge);
         return Math.floor(betAmount * multiplier * 100) / 100;
+    };
+
+    const cashout = () => {
+        if (!cashoutAvailable) {
+            toast.error("Cashout is not available right now.");
+            return;
+        }
+
+        const partialPayout = Math.floor(betAmount * 0.5 * 100) / 100; // Example: 50% of the bet amount
+        setBalance((prev) => Math.round((prev + partialPayout) * 100) / 100);
+        setProfit((prev) => prev - betAmount + partialPayout);
+        setCashoutAvailable(false);
+        setIsRolling(false);
+        toast.success(`You cashed out ${partialPayout.toFixed(2)}!`);
     };
 
     const updateGameStats = (isWin: boolean, payout: number) => {
@@ -158,6 +175,14 @@ const DiceGame: React.FC = () => {
                         isRolling={isRolling}
                         onRoll={rollDice}
                     />
+                    {cashoutAvailable && (
+                        <button
+                            onClick={cashout}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
+                        >
+                            Cashout
+                        </button>
+                    )}
                 </div>
                 <div>
                     <GameHistory history={gameHistory} />
