@@ -6,6 +6,7 @@ import { ReactNode } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { baseSepolia } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
+import { ToastProvider } from "@/contexts/toast/toast";
 const wagmiConfig = createConfig({
   chains: [baseSepolia],
   connectors: [
@@ -25,14 +26,16 @@ export default function App({
   return (
     <WagmiProvider config={wagmiConfig}>
     <Providers>
+    <ToastProvider>
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
-    >
+      >
         <Component {...pageProps} />
     </ThemeProvider>
+      </ToastProvider>
     </Providers>
     </WagmiProvider>
   );

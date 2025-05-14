@@ -10,6 +10,9 @@ import { CONTRACT_ABI } from "@/lib/contract";
 import { useTheme } from "next-themes";
 import Header from "@/components/Header";
 import { outcomes } from "@/utils/plinko/outcomes";
+import { useToast } from "@/contexts/toast/toastContext";
+import { ClipLoader } from "react-spinners";
+
 
 export default function Game() {
   const {
@@ -30,6 +33,11 @@ export default function Game() {
   const [betAmount, setBetAmount] = useState<number>(0.0001);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
+  const toast=useToast();
+  const [isPlacingBet, setIsPlacingBet] = useState(false);
+  const [isStartingGame, setIsStartingGame] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -53,10 +61,18 @@ export default function Game() {
 
   const handlePlaceBet = async () => {
     if (betAmount <= 0) {
-      alert("Please enter a valid bet amount.");
+      toast.open({
+        message: {
+          heading: "Insufficient Balance",
+          content: "Please enter a valid bet amount.",
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "warning",
+      });
       return;
     }
-
+    setIsPlacingBet(true);
     try {
       const receipt = await placeBet(betAmount, 0); // 0 = Plinko
 
@@ -66,7 +82,18 @@ export default function Game() {
           log.topics[0].toLowerCase() === BET_PLACED_EVENT_SIGNATURE.toLowerCase()
       );
 
-      if (!log) throw new Error("BetPlaced event not found in logs");
+      if (!log) {
+        toast.open({
+          message: {
+        heading: "Bet Event Missing",
+        content: "⚠️ BetPlaced event not found in transaction logs.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
+        throw new Error("BetPlaced event not found in logs");
+      }
 
       // Decode using Interface
       const iface = new ethers.Interface(CONTRACT_ABI);
@@ -76,28 +103,71 @@ export default function Game() {
       setSessionId(sessionId);
 
       console.log("✅ Bet placed with sessionId:", sessionId, "for amount of ", betAmount);
+      toast.open({
+        message: {
+          heading: "Bet Placed",
+          content: `Bet Amount: ${betAmount} ETH`,
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "success",
+      });
     } catch (error) {
-      console.error("❌ Bet failed:", error);
-      alert("Bet failed. Check console for details.");
+     toast.open({
+        message: {
+          heading: "Bet Failed",
+          content: "An error occurred while placing the bet.",
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "error",
+      });
+    }finally {
+      setIsPlacingBet(false);
     }
   };
 
   const startGame = async () => {
-    try {
-      if (sessionId === null) {
-        alert("No session found. Please place a bet first.");
+    if (sessionId === null) {
+      toast.open({
+        message: {
+          heading: "No Session",
+          content: "No session found. Please place a bet first.",
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "warning",
+      });
         return;
       }
-
+      
       if (betAmount <= 0) {
-        alert("Please enter a valid bet amount.");
+        toast.open({
+          message: {
+            heading: "Invalid Bet Amount",
+            content: "Please enter a valid bet amount.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
         return;
       }
-
+      
       if (wallet < betAmount) {
-        alert("Insufficient balance!");
+        toast.open({
+          message: {
+            heading: "Insufficient Balance",
+            content: "You do not have enough balance to place this bet.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
         return;
       }
+      setIsStartingGame(true);
+      try {
 
       const { multiplier1, point } = await getGameResultPlinko(sessionId!);
 
@@ -120,20 +190,46 @@ export default function Game() {
       }
     } catch (error) {
       console.error("Error starting game:", error);
-      alert("Error starting game. Check console for details.");
+      toast.open({
+        message: {
+          heading: "Game Start Failed",
+          content: "An error occurred while starting the game.",
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "error",
+      });
+    }finally {
+      setIsStartingGame(false);
     }
   };
 
   const handleWithdraw = async () => {
     if (sessionId === null) {
-      alert("No session found to resolve.");
+      toast.open({
+        message: {
+          heading: "No Session",
+          content: "No session found. Please place a bet first.",
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "warning",
+      });
       return;
     }
-
+    setIsWithdrawing(true);
     try {
       console.log("Starting withdrawal...");
       const { payout } = await withdrawWinnigs(sessionId);
-      alert(`✅ Withdrawal successful! You received ${payout} ETH`);
+      toast.open({
+        message: {
+          heading: "Withdrawal Successful",
+          content: `You have withdrawn ${payout} ETH.`,
+        },
+        duration: 5000,
+        position: "top-center",
+        color: "success",
+      });
 
       setReward(null);
       setMultiplier(null);
@@ -144,16 +240,58 @@ export default function Game() {
       const msg = error?.message?.toLowerCase() || "";
 
       if (msg.includes("already resolved")) {
-        alert("⚠️ This session has already been resolved.");
+        toast.open({
+          message: {
+        heading: "Session Resolved",
+        content: "⚠️ This session has already been resolved.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "warning",
+        });
       } else if (msg.includes("invalid session")) {
-        alert("❌ Invalid session ID.");
+        toast.open({
+          message: {
+        heading: "Invalid Session",
+        content: "❌ Invalid session ID.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
       } else if (msg.includes("transfer failed")) {
-        alert("❌ ETH transfer failed. Try again later.");
+        toast.open({
+          message: {
+        heading: "Transfer Failed",
+        content: "❌ ETH transfer failed. Try again later.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
       } else if (msg.includes("withdrawal event not found")) {
-        alert("⚠️ No withdrawal event found. Please check manually.");
+        toast.open({
+          message: {
+        heading: "Withdrawal Event Missing",
+        content: "⚠️ No withdrawal event found. Please check manually.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "warning",
+        });
       } else {
-        alert("❌ Withdrawal failed. See console for details.");
+        toast.open({
+          message: {
+        heading: "Withdrawal Failed",
+        content: "❌ Withdrawal failed.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        });
       }
+    }finally {
+      setIsWithdrawing(false);
     }
   };
 
@@ -183,28 +321,53 @@ export default function Game() {
             </div>
           </div>
 
-          {sessionId !== null ? (
-            <Button
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md"
-              onClick={startGame}
-            >
-              Start Game
-            </Button>
-          ) : (
-            <Button
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md"
-              onClick={handlePlaceBet}
-            >
-              Place Bet
-            </Button>
-          )}
 
-          <Button
-            className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md"
+            {sessionId !== null ? (
+            <Button
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
+              onClick={startGame}
+              disabled={isStartingGame || isPlacingBet || isWithdrawing || false}
+            >
+              {isStartingGame ? (
+              <>
+                <ClipLoader size={20} color="#ffffff" />
+                <span className="ml-2">Starting Game...</span>
+              </>
+              ) : (
+              "Start Game"
+              )}
+            </Button>
+            ) : (
+            <Button
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
+              onClick={handlePlaceBet}
+              disabled={isPlacingBet || isStartingGame || isWithdrawing}
+            >
+              {isPlacingBet ? (
+              <>
+                <ClipLoader size={20} color="#ffffff" />
+                <span className="ml-2">Placing Bet...</span>
+              </>
+              ) : (
+              "Place Bet"
+              )}
+            </Button>
+            )}
+
+            <Button
+            className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md flex items-center justify-center"
             onClick={handleWithdraw}
-          >
-            Withdraw
-          </Button>
+            disabled={isWithdrawing || isPlacingBet || isStartingGame}
+            >
+            {isWithdrawing ? (
+              <>
+              <ClipLoader size={20} color="#ffffff" />
+              <span className="ml-2">Withdrawing...</span>
+              </>
+            ) : (
+              "Withdraw"
+            )}
+            </Button>
 
           {reward !== null && (
             <div
