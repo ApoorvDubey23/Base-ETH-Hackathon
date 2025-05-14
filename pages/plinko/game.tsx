@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import { CONTRACT_ABI } from "@/lib/contract";
 import { useTheme } from "next-themes";
 import Header from "@/components/Header";
+import { outcomes } from "@/utils/plinko/outcomes";
 
 export default function Game() {
   const {
@@ -107,10 +108,15 @@ export default function Game() {
       console.log("data:", multiplier1, point, "actualReward:", actualReward);
 
       if (ballManager) {
-        const finalIndex = Math.floor(point);
-        console.log("finalIndex", finalIndex);
+        console.log("finalIndex", point);
 
-        ballManager.addBall(finalIndex);
+      const outcomePoints = outcomes[point.toString() as keyof typeof outcomes];
+      if (outcomePoints && outcomePoints.length > 0) {
+        const randomPoint = outcomePoints[Math.floor(Math.random() * outcomePoints.length)];
+        ballManager.addBall(randomPoint);
+      } else {
+        console.error("No outcomes available for the given point:", point);
+      }
       }
     } catch (error) {
       console.error("Error starting game:", error);
