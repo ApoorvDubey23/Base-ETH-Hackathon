@@ -1,0 +1,113 @@
+import { Interface } from "ethers";
+
+interface ToastMessage {
+    heading: string;
+    content: string;
+}
+
+
+
+interface Receipt {
+    logs: any[];
+}
+
+export async function PlaceBet(
+    betAmount: number,
+    placeBet: (amount: number, gameType: number, betnum?: number, rollu?: boolean) => Promise<Receipt>,
+    setIsPlacingBet: (isPlacing: boolean) => void,
+    setSessionId: (sessionId: number) => void,
+    toast:any,
+    CONTRACT_ABI: any,
+    BET_PLACED_EVENT_SIGNATURE: string,
+    game: number,
+    betnum?: number,
+    rollu?: boolean
+): Promise<void> {
+    if (betAmount <= 0) {
+        toast.open({
+            message: {
+                heading: "Insufficient Balance",
+                content: "Please enter a valid bet amount.",
+            },
+            duration: 5000,
+            position: "top-center",
+            color: "warning",
+        });
+        return;
+    }
+    setIsPlacingBet(true);
+    try {
+        let receipt=null;
+        if(game==1){
+            receipt = await placeBet(betAmount, game, betnum, rollu);
+        }else{
+             receipt = await placeBet(betAmount, game);
+         }
+
+         if(!receipt) {
+            toast.open({
+                message: {
+                    heading: "Transaction Failed",
+                    content: "Transaction receipt is null.",
+                },
+                duration: 5000,
+                position: "top-center",
+                color: "error",
+            });
+            throw new Error("Transaction receipt is null");
+        }
+        // Find the BetPlaced event log
+        const log = receipt.logs.find(
+            (log: any) =>
+                log.topics[0].toLowerCase() === BET_PLACED_EVENT_SIGNATURE.toLowerCase()
+        );
+
+        if (!log) {
+            toast.open({
+                message: {
+                    heading: "Bet Event Missing",
+                    content: "⚠️ BetPlaced event not found in transaction logs.",
+                },
+                duration: 5000,
+                position: "top-center",
+                color: "error",
+            });
+            throw new Error("BetPlaced event not found in logs");
+        }
+
+        // Decode using Interface
+        const iface = new Interface(CONTRACT_ABI);
+        const decoded = iface.decodeEventLog("BetPlaced", log.data, log.topics);
+
+        const sessionId = Number(decoded.sessionId);
+        setSessionId(sessionId);
+
+        console.log(
+            "✅ Bet placed with sessionId:",
+            sessionId,
+            "for amount of ",
+            betAmount
+        );
+        toast.open({
+            message: {
+                heading: "Bet Placed",
+                content: `Bet Amount: ${betAmount} ETH`,
+            },
+            duration: 5000,
+            position: "top-center",
+            color: "success",
+        });
+    } catch (error) {
+        toast.open({
+            message: {
+                heading: "Bet Failed",
+                content: "An error occurred while placing the bet.",
+            },
+            duration: 5000,
+            position: "top-center",
+            color: "error",
+        });
+    } finally {
+        setIsPlacingBet(false);
+    }
+}

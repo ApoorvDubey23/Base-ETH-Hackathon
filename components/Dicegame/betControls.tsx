@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { ClipLoader } from 'react-spinners';
 
 interface BetControlsProps {
     betAmount: number;
@@ -9,6 +10,9 @@ interface BetControlsProps {
     balance: number;
     isRolling: boolean;
     onRoll: () => void;
+    sessionId: number | null;
+    handlePlaceBet: () => void;
+    isPlacingBet: boolean;
 }
 
 const BetControls: React.FC<BetControlsProps> = ({
@@ -17,17 +21,18 @@ const BetControls: React.FC<BetControlsProps> = ({
     balance,
     isRolling,
     onRoll,
+    sessionId,
+    handlePlaceBet,
+    isPlacingBet,
 }) => {
     const handleQuickBet = (multiplier: number) => {
-        const newAmount = Math.min(balance, Math.max(1, Math.floor(betAmount * multiplier)));
-        setBetAmount(newAmount);
+        setBetAmount(betAmount * multiplier);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value, 10) || 0;
-        setBetAmount(Math.min(balance, Math.max(0, value)));
+        const value = parseInt(e.target.value, 10) || 1;
+        setBetAmount(Math.min(balance, Math.max(1, value)));
     };
-
     return (
         <div className="flex flex-col space-y-6 w-full max-w-md p-4 bg-white dark:bg-neutral-900 rounded-lg shadow-md">
             <div className="flex items-center space-x-4">
@@ -41,7 +46,6 @@ const BetControls: React.FC<BetControlsProps> = ({
                             value={betAmount}
                             onChange={handleInputChange}
                             className="bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 pr-20 rounded-md border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500"
-                            min={1}
                             max={balance}
                             disabled={isRolling}
                         />
@@ -69,37 +73,37 @@ const BetControls: React.FC<BetControlsProps> = ({
                 </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-3">
-                {[5, 10, 25, 50, 100, 250, 500, 'Max'].map((value, index) => (
-                    <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            if (value === 'Max') {
-                                setBetAmount(balance);
-                            } else {
-                                setBetAmount(Math.min(balance, value as number));
-                            }
-                        }}
-                        disabled={isRolling}
-                        className={cn(
-                            "bg-neutral-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 border border-neutral-300 dark:border-neutral-700 rounded-md transition-all duration-200",
-                            value === betAmount && "bg-blue-600 text-white dark:bg-blue-500"
-                        )}
-                    >
-                        {typeof value === 'number' ? value : value}
-                    </Button>
-                ))}
-            </div>
-
-            <Button
-                onClick={onRoll}
-                disabled={isRolling || betAmount <= 0 || betAmount > balance}
-                className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {isRolling ? "Rolling..." : "Roll Dice"}
-            </Button>
+            {sessionId !== null ? (
+                <Button
+                    onClick={onRoll}
+                    disabled={isRolling || isPlacingBet}
+                    className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isRolling ? (
+                        <>
+                            <ClipLoader size={20} color="#ffffff" />
+                            <span className="ml-2">Rolling...</span>
+                        </>
+                    ) : (
+                        "Roll"
+                    )}
+                </Button>
+            ) : (
+                <Button
+                    onClick={handlePlaceBet}
+                    disabled={isRolling|| betAmount > balance || isPlacingBet}
+                    className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isPlacingBet ? (
+                        <>
+                            <ClipLoader size={20} color="#ffffff" />
+                            <span className="ml-2">Placing Bet...</span>
+                        </>
+                    ) : (
+                        "Place Bet"
+                    )}
+                </Button>
+            )}
         </div>
     );
 };

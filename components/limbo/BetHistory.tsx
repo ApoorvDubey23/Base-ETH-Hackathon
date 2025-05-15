@@ -16,7 +16,7 @@ type BetHistoryProps = {
 
 const BetHistory: React.FC<BetHistoryProps> = ({ records }) => {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 mt-6 shadow-md">
+    <div className="bg-white dark:bg-gray-900 rounded-lg  shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
         Bet History
       </h2>

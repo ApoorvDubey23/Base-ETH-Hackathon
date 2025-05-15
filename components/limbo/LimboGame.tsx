@@ -104,7 +104,7 @@ const LimboGame: React.FC<LimboGameProps> = ({ balance, onBalanceChange, onBetCo
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100">
+    <div className="flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-700 mb-10 dark:text-gray-100">
       <main className="max-w-5xl w-full mx-auto px-6 py-8">
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
