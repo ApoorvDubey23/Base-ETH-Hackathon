@@ -178,6 +178,30 @@
 				"type": "uint256"
 			}
 		],
+		"name": "playMinesTile",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "isMine",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "payout",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
 		"name": "plinkoGameResult",
 		"outputs": [
 			{
@@ -304,6 +328,11 @@
 						"internalType": "bool",
 						"name": "rollu",
 						"type": "bool"
+					},
+					{
+						"internalType": "uint8",
+						"name": "safeTilesFound",
+						"type": "uint8"
 					}
 				],
 				"internalType": "struct StakeGames.GameSession[]",
@@ -328,6 +357,25 @@
 				"internalType": "uint256[]",
 				"name": "",
 				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"name": "minesPerTileIncrement",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -442,6 +490,11 @@
 				"internalType": "bool",
 				"name": "rollu",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint8",
+				"name": "safeTilesFound",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
