@@ -36,6 +36,25 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			}
+		],
+		"name": "DiceGameResult",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "outcome",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -83,6 +102,37 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "bool",
+				"name": "isWin",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "payout",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "outcome",
+				"type": "uint8"
+			}
+		],
+		"name": "GameResultDice",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "sessionId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "payout",
 				"type": "uint256"
@@ -97,6 +147,16 @@
 				"internalType": "enum StakeGames.GameType",
 				"name": "_game",
 				"type": "uint8"
+			},
+			{
+				"internalType": "uint8",
+				"name": "betnum",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bool",
+				"name": "roll",
+				"type": "bool"
 			}
 		],
 		"name": "placeBet",
@@ -166,6 +226,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"name": "dicemultiplier",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getAllSessions",
 		"outputs": [
@@ -203,6 +282,11 @@
 					},
 					{
 						"internalType": "bool",
+						"name": "isplayed",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
 						"name": "isresolved",
 						"type": "bool"
 					},
@@ -210,6 +294,16 @@
 						"internalType": "uint256",
 						"name": "timestamp",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "betnum",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "rollu",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct StakeGames.GameSession[]",
@@ -326,6 +420,11 @@
 			},
 			{
 				"internalType": "bool",
+				"name": "isplayed",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
 				"name": "isresolved",
 				"type": "bool"
 			},
@@ -333,6 +432,16 @@
 				"internalType": "uint256",
 				"name": "timestamp",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "betnum",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bool",
+				"name": "rollu",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
