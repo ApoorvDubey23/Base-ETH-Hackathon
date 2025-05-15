@@ -72,7 +72,7 @@ export const useStakeGameFunctions = () => {
     const tx = await contract.DiceGameResult(sessionId);
     const receipt = await tx.wait();
 
-    const GAME_RESULT_DICE_SIG = ethers.id("GameResultDice(uint256,bool,uint256,uint8)");
+    const GAME_RESULT_DICE_SIG = ethers.id("GameResultDice(uint256,bool,uint256,uint256)");
 
     const log = receipt.logs.find(
       (log: any) => log.topics[0].toLowerCase() === GAME_RESULT_DICE_SIG.toLowerCase()
@@ -89,6 +89,41 @@ export const useStakeGameFunctions = () => {
       outcome: Number(decoded.outcome),
     };
   };
+
+  const playMinesTile = async (sessionId: number) => {
+  if (!walletClient || !address) {
+    throw new Error("Wallet not connected");
+  }
+
+  const signer = await getSigner();
+  const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+
+  // Call playMinesTile function on contract (this is a transaction)
+  const tx = await contract.playMinesTile(sessionId);
+  const receipt = await tx.wait();
+
+  // The event signature of GameResult (from your Solidity)
+  const GAME_RESULT_EVENT_SIG = ethers.id("GameResult(uint256,bool,uint256,uint256,uint8)");
+
+  // Find the log event emitted by playMinesTile
+  const log = receipt.logs.find(
+    (log: any) => log.topics[0].toLowerCase() === GAME_RESULT_EVENT_SIG.toLowerCase()
+  );
+
+  if (!log) throw new Error("GameResult event not found in logs");
+
+  // Decode the event data using your ABI
+  const iface = new ethers.Interface(CONTRACT_ABI);
+  const decoded = iface.decodeEventLog("GameResult", log.data, log.topics);
+
+  return {
+    isWin: decoded.isWin as boolean,
+    payout: Number(ethers.formatEther(decoded.payout)),
+    multiplier: Number(decoded.multiplier)/100000, 
+    safeTilesFound: Number(decoded.outcome),
+  };
+};
+
 
   const withdrawWinnigs = async (sessionId: number) => {
     const signer = await getSigner();
