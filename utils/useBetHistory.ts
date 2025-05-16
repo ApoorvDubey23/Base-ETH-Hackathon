@@ -17,12 +17,13 @@ export interface BetHistory {
 }
 
 export const useBetHistory = (gameType?: number) => {
-  const { getUserSessionList, getAllSessions, address } =
-    useStakeGameFunctions();
-  const [betHistory, setBetHistory] = useState<BetHistory[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [lastSessionCount, setLastSessionCount] = useState<number>(0);
+    const { getUserSessionList, getAllSessions, address } = useStakeGameFunctions();
+    const [betHistory, setBetHistory] = useState<BetHistory[]>([]);
+    const [allBetHistory, setAllBetHistory] = useState<BetHistory[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
+    const [lastSessionCount, setLastSessionCount] = useState<number>(0);
+
 
   const fetchHistory = async () => {
     if (!address) return;
@@ -43,26 +44,33 @@ export const useBetHistory = (gameType?: number) => {
         return;
       }
 
-      const filtered = allSessions
-        .filter((session: BetHistory) => {
-          const matchesUser =
-            session.player.toLowerCase() === address.toLowerCase();
-          const matchesGame =
-            gameType !== undefined ? session.game === gameType : true;
-          return matchesUser && matchesGame;
-        })
-        .sort((a, b) => b.timestamp - a.timestamp);
+            const sortedSessions = allSessions.sort((a, b) => b.timestamp - a.timestamp);
 
-      setBetHistory(filtered);
-    } catch (err: any) {
-      console.error("Error fetching bet history:", err);
-      setError(err?.message || "Unexpected error");
-    } finally {
-      setLoading(false);
-    }
-  };
+            const filtered = sortedSessions
+                .filter((session: BetHistory) => {
+                    const matchesUser = session.player.toLowerCase() === address.toLowerCase();
+                    const matchesGame = gameType !== undefined ? session.game === gameType : true;
+                    return matchesUser && matchesGame;
+                })
+                .slice(0, 10);
+            setBetHistory(filtered);
+
+            const allFiltered = sortedSessions
+                .filter((session: BetHistory) => {
+                    return gameType !== undefined ? session.game === gameType : true;
+                })
+                .slice(0, 10);
+            setAllBetHistory(allFiltered);
+
+        } catch (err: any) {
+            console.error("Error fetching bet history:", err);
+            setError(err?.message || "Unexpected error");
+        } finally {
+            setLoading(false);
+        }
+    };
 
   fetchHistory();
 
-  return { betHistory, loading, error };
+    return { betHistory, allBetHistory, loading, error };
 };

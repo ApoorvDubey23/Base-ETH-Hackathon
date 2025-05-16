@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useBetHistory } from "@/utils/useBetHistory";
 import { toScientificNotation } from "@/utils/scientificNotation";
+import { useStakeGameFunctions } from "@/ContractFunctions/functions";
+import { CircleDot } from "lucide-react";
 
 interface BetHistoryProps {
   gameType?: number; // 0: Plinko, 1: Dice, 2: Mines; if omitted, show all.
@@ -22,21 +24,23 @@ const gameTypeToLabel = (type: number): string => {
 
 const BetHistory: React.FC<BetHistoryProps> = ({ gameType }) => {
   const { betHistory, loading, error } = useBetHistory(gameType);
+  const { address } = useStakeGameFunctions();
 
-  if (loading) {
-    return <div>Loading bet history...</div>;
-  }
+  const [onlyMyBets, setOnlyMyBets] = useState(false);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading) return <div>Loading bet history...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (betHistory.length === 0) return <div>No bet history found.</div>;
 
-  if (betHistory.length === 0) {
-    return <div>No bet history found.</div>;
-  }
+  const filteredHistory = onlyMyBets && address
+    ? betHistory.filter(
+        (session) =>
+          session.player.toLowerCase() === address.toLowerCase()
+      )
+    : betHistory;
 
-  const totalBets = betHistory.length;
-  const totalProfit = betHistory.reduce(
+  const totalBets = filteredHistory.length;
+  const totalProfit = filteredHistory.reduce(
     (acc, session) => acc + (session.payout - session.betAmount),
     0
   );
@@ -48,6 +52,24 @@ const BetHistory: React.FC<BetHistoryProps> = ({ gameType }) => {
           <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-900 dark:text-gray-100">
             Bet History
           </h2>
+
+          {address && (
+            <div className="flex items-center mb-6 w-full px-6">
+              <input
+                type="checkbox"
+                id="myBets"
+                checked={onlyMyBets}
+                onChange={() => setOnlyMyBets(!onlyMyBets)}
+                className="mr-3 h-5 w-5 accent-indigo-600 dark:accent-purple-400"
+              />
+              <label
+                htmlFor="myBets"
+                className="text-lg text-gray-700 dark:text-gray-300"
+              >
+                Show My Bets
+              </label>
+            </div>
+          )}
 
           <div className="flex justify-between w-full mb-6 px-6">
             <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -71,7 +93,7 @@ const BetHistory: React.FC<BetHistoryProps> = ({ gameType }) => {
                 <thead>
                   <tr className="bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 text-left">
                     <th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Session ID
+                      {onlyMyBets ? "Session ID" : "Player Address"}
                     </th>
                     <th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Game
@@ -91,13 +113,17 @@ const BetHistory: React.FC<BetHistoryProps> = ({ gameType }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {betHistory.map((session) => (
+                  {filteredHistory.map((session) => (
                     <tr
                       key={session.sessionId}
                       className="border-b border-gray-200 dark:border-gray-700 last:border-0 transition-colors hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900 dark:hover:to-pink-900"
                     >
                       <td className="py-4 px-4 text-gray-900 dark:text-white">
-                        {session.sessionId}
+                        {onlyMyBets
+                          ? session.sessionId
+                          : session.player.slice(0, 6) +
+                            "..." +
+                            session.player.slice(-4)}
                       </td>
                       <td className="py-4 px-4 text-gray-700 dark:text-gray-300">
                         {gameTypeToLabel(session.game)}
@@ -116,6 +142,16 @@ const BetHistory: React.FC<BetHistoryProps> = ({ gameType }) => {
                       </td>
                     </tr>
                   ))}
+                  {filteredHistory.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="py-4 px-4 text-center text-gray-500 dark:text-gray-400"
+                      >
+                        No bets found.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
