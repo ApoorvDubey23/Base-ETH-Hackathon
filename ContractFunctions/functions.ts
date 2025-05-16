@@ -157,9 +157,47 @@ export const useStakeGameFunctions = () => {
      const signer = await getSigner();
     const contract = new ethers.Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
 
+    if (!contract.getAllSessions) {
+      throw new Error("getAllSessions method not found in the contract ABI");
+    }
     const sessions = await contract.getAllSessions();
+
     // filter the required data from these sessions , see console for the same , button added in header
-    console.log(sessions);
+    const formatted = sessions.map((session: any) => {
+      console.log({
+      sessionId: typeof Number(session.sessionId),
+      player: typeof session.player,
+      game: typeof Number(session.game), // Convert bigint to number
+      betAmount: typeof Number(ethers.formatEther(session.betAmount)),
+      isWin: typeof session.isWin,
+      payout: typeof Number(ethers.formatEther(session.payout)),
+      isplayed: typeof session.isplayed,
+      isresolved: typeof session.isresolved,
+      timestamp: typeof Number(session.timestamp),
+      betnum: typeof session.betnum,
+      rollu: typeof session.rollu,
+      safeTilesFound: typeof session.safeTilesFound,
+      });
+
+      return {
+      sessionId: Number(session.sessionId),
+      player: session.player,
+      game: Number(session.game), // Convert bigint to number
+      betAmount: Number(ethers.formatEther(session.betAmount)),
+      isWin: session.isWin,
+      payout: Number(ethers.formatEther(session.payout)),
+      isplayed: session.isplayed,
+      isresolved: session.isresolved,
+      timestamp: Number(session.timestamp),
+      betnum: session.betnum,
+      rollu: session.rollu,
+      safeTilesFound: session.safeTilesFound,
+      };
+    });
+
+    // console.log(sessions);
+    // console.log("hello");
+    // return formatted;
     
   }
   const getUserSessionList = async () => {
@@ -188,6 +226,7 @@ export const useStakeGameFunctions = () => {
 
 //   }
 
+
   return {
     placeBet,
     getGameResultPlinko,
@@ -200,4 +239,5 @@ export const useStakeGameFunctions = () => {
     getUserSessionList,
     playMinesTile
   };
+
 };
