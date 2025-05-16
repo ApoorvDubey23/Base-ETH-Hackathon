@@ -198,5 +198,6 @@ export const useStakeGameFunctions = () => {
     withdrawWinnigs,
     getAllSessions,
     getUserSessionList,
+    playMinesTile
   };
 };

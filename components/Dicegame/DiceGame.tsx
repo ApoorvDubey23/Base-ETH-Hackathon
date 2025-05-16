@@ -6,7 +6,7 @@ import GameStats from "./gameStats";
 import PredictionSelector from "./predictionStats";
 import { useStakeGameFunctions } from "@/ContractFunctions/functions";
 import { ethers } from "ethers";
-import { PlaceBet } from "@/utils/helpers";
+import { PlaceBet, Withdraw } from "@/utils/helpers";
 import { CONTRACT_ABI } from "@/lib/contract";
 import { useToast } from "@/contexts/toast/toastContext";
 
@@ -34,6 +34,7 @@ const DiceGame: React.FC = () => {
   const [isPlacingBet, setIsPlacingBet] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const toast = useToast();
   useEffect(() => {
     const fetchBalance = async () => {
@@ -95,6 +96,7 @@ const DiceGame: React.FC = () => {
     setIsRolling(true);
     setCashoutAvailable(true);
     setBalance((prev) => prev - betAmount);
+    setProfit((prev) => prev - betAmount);
 
     const rollDuration = 1500;
     const startTime = Date.now();
@@ -106,6 +108,7 @@ const DiceGame: React.FC = () => {
         finalizeRoll();
       }
     }, 100);
+    setHasPlayed(true);
   };
 
   const finalizeRoll = async () => {
@@ -117,11 +120,10 @@ const DiceGame: React.FC = () => {
       updateGameStats(isWin, payout);
       addToGameHistory(outcome, payout);
       setIsRolling(false);
-      setCashoutAvailable(false);
     }, 500);
   };
 
-  const cashout = () => {
+  const cashout = async () => {
     if (!cashoutAvailable) {
       toast.open({
         message: {
@@ -135,30 +137,42 @@ const DiceGame: React.FC = () => {
       return;
     }
 
-    const partialPayout = Math.floor(betAmount * 0.5 * 100) / 100; // Example: 50% of the bet amount
-    setBalance((prev) => Math.round((prev + partialPayout) * 100) / 100);
-    setProfit((prev) => prev - betAmount + partialPayout);
+    await Withdraw(
+      sessionId!,
+      withdrawWinnigs,
+      setIsWithdrawing,
+      setSessionId,
+      toast
+    );
+
+    const updatedBalance = await getBalance();
+    setBalance(parseFloat(updatedBalance));
+
     setCashoutAvailable(false);
     setIsRolling(false);
+
     toast.open({
       message: {
         heading: "Cashout Successful",
-        content: `You cashed out ${partialPayout.toFixed(2)}!`,
+        content: "You cashed out!",
       },
       duration: 5000,
       position: "top-center",
       color: "success",
     });
+    setSessionId(null);
+    setHasPlayed(false);
   };
 
-  const updateGameStats = (isWin: boolean, payout: number) => {
+  const updateGameStats =async (isWin: boolean, payout: number) => {
+    const updatedBalance = await getBalance();
+    setBalance(parseFloat(updatedBalance));
     if (isWin) {
-      setBalance((prev) => Math.round((prev + payout) * 100) / 100);
       setTotalWins((prev) => prev + 1);
       toast.open({
         message: {
           heading: "You Won!",
-          content: `You won ${payout.toFixed(2)}!`,
+          content: `You won ${payout}!`,
         },
         duration: 5000,
         position: "top-center",
@@ -168,7 +182,7 @@ const DiceGame: React.FC = () => {
       toast.open({
         message: {
           heading: "You Lost!",
-          content: `You lost ${betAmount.toFixed(2)}!`,
+          content: `You lost ${betAmount}!`,
         },
         duration: 5000,
         position: "top-center",
@@ -231,6 +245,7 @@ const DiceGame: React.FC = () => {
             sessionId={sessionId}
             handlePlaceBet={handlePlaceBet}
             isPlacingBet={isPlacingBet}
+            hasPlayed={hasPlayed}
           />
           {cashoutAvailable && (
             <button

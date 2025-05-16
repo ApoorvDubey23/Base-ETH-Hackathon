@@ -40,7 +40,7 @@ const GameStats: React.FC<GameStatsProps> = ({ balance, totalBets, totalWins, pr
                         }`}
                     >
                         {profit >= 0 ? '+' : ''}
-                        {profit.toFixed(2)}
+                        {profit}
                     </p>
                 </CardContent>
             </Card>

@@ -13,7 +13,7 @@ import { outcomes } from "@/utils/plinko/outcomes";
 import { useToast } from "@/contexts/toast/toastContext";
 import { ClipLoader } from "react-spinners";
 import Footer from "@/components/Footer";
-import { PlaceBet } from "@/utils/helpers";
+import { PlaceBet, Withdraw } from "@/utils/helpers";
 
 interface BetRecord {
   sessionId: number;
@@ -55,15 +55,14 @@ export default function Game() {
       setBallManager(manager);
     }
   }, [theme]);
-
+  const fetchBalance = async () => {
+    if (address) {
+      const balancevar = await getBalance();
+      setBalance(balancevar);
+      console.log("Balance:", balancevar);
+    }
+  };
   useEffect(() => {
-    const fetchBalance = async () => {
-      if (address) {
-        const balancevar = await getBalance();
-        setBalance(balancevar);
-        console.log("Balance:", balancevar);
-      }
-    };
     fetchBalance();
   }, [address]);
 
@@ -83,6 +82,7 @@ export default function Game() {
       0
     );
   };
+  fetchBalance();
 
   const startGame = async () => {
     if (sessionId === null) {
@@ -146,6 +146,8 @@ export default function Game() {
       setReward(actualReward);
       console.log("data:", multiplier1, point, "actualReward:", actualReward);
       // Save the bet record to bet history.
+      fetchBalance();
+
       setBetHistory((prev) => [
         ...prev,
         {
@@ -172,94 +174,20 @@ export default function Game() {
   };
 
   const handleWithdraw = async () => {
-    if (sessionId === null) {
-      toast.open({
-        message: {
-          heading: "No Session",
-          content: "No session found. Please place a bet first.",
-        },
-        duration: 5000,
-        position: "top-center",
-        color: "warning",
-      });
-      return;
-    }
-    setIsWithdrawing(true);
-    try {
-      console.log("Starting withdrawal...");
-      const { payout } = await withdrawWinnigs(sessionId);
-      toast.open({
-        message: {
-          heading: "Withdrawal Successful",
-          content: `You have withdrawn ${payout} ETH.`,
-        },
-        duration: 5000,
-        position: "top-center",
-        color: "success",
-      });
-
-      setReward(null);
-      setMultiplier(null);
-      setSessionId(null);
-    } catch (error: any) {
-      console.error("Withdraw failed:", error);
-
-      const msg = error?.message?.toLowerCase() || "";
-
-      if (msg.includes("already resolved")) {
-        toast.open({
-          message: {
-            heading: "Session Resolved",
-            content: "⚠️ This session has already been resolved.",
-          },
-          duration: 5000,
-          position: "top-center",
-          color: "warning",
-        });
-      } else if (msg.includes("invalid session")) {
-        toast.open({
-          message: {
-            heading: "Invalid Session",
-            content: "❌ Invalid session ID.",
-          },
-          duration: 5000,
-          position: "top-center",
-          color: "error",
-        });
-      } else if (msg.includes("transfer failed")) {
-        toast.open({
-          message: {
-            heading: "Transfer Failed",
-            content: "❌ ETH transfer failed. Try again later.",
-          },
-          duration: 5000,
-          position: "top-center",
-          color: "error",
-        });
-      } else if (msg.includes("withdrawal event not found")) {
-        toast.open({
-          message: {
-            heading: "Withdrawal Event Missing",
-            content: "⚠️ No withdrawal event found. Please check manually.",
-          },
-          duration: 5000,
-          position: "top-center",
-          color: "warning",
-        });
-      } else {
-        toast.open({
-          message: {
-            heading: "Withdrawal Failed",
-            content: "❌ Withdrawal failed.",
-          },
-          duration: 5000,
-          position: "top-center",
-          color: "error",
-        });
-      }
-    } finally {
-      setIsWithdrawing(false);
-    }
+    await Withdraw(
+      sessionId,
+      withdrawWinnigs,
+      setIsWithdrawing,
+      setSessionId,
+      toast
+    );
+    setReward(null);
+    setMultiplier(null);
+    setBetAmount(0.0001);
+    setBetHistory((prev) =>
+      prev.filter((record) => record.sessionId !== sessionId)
+    );
+    setSessionId(null);
   };
 
   return (

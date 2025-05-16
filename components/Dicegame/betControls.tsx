@@ -13,6 +13,7 @@ interface BetControlsProps {
     sessionId: number | null;
     handlePlaceBet: () => void;
     isPlacingBet: boolean;
+    hasPlayed?: boolean;
 }
 
 const BetControls: React.FC<BetControlsProps> = ({
@@ -24,6 +25,7 @@ const BetControls: React.FC<BetControlsProps> = ({
     sessionId,
     handlePlaceBet,
     isPlacingBet,
+    hasPlayed,
 }) => {
     const handleQuickBet = (multiplier: number) => {
         setBetAmount(betAmount * multiplier);
@@ -73,10 +75,10 @@ const BetControls: React.FC<BetControlsProps> = ({
                 </div>
             </div>
 
-            {sessionId !== null ? (
+            {sessionId !== null && !hasPlayed? (
                 <Button
                     onClick={onRoll}
-                    disabled={isRolling || isPlacingBet}
+                    disabled={isRolling || isPlacingBet||hasPlayed}
                     className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isRolling ? (
