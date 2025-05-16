@@ -15,7 +15,6 @@ import { ClipLoader } from "react-spinners";
 import Footer from "@/components/Footer";
 import { PlaceBet, Withdraw } from "@/utils/helpers";
 import BetHistory from "@/components/BetHistory";
-import { toScientificNotation } from "@/utils/scientificNotation";
 
 interface BetRecord {
   sessionId: number;
@@ -196,95 +195,96 @@ export default function Game() {
       </div>
 
       <div className="flex flex-col lg:flex-row items-start justify-center px-8 gap-10">
-        <div className="w-full max-w-sm space-y-6 bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg mt-8 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-3xl font-bold mb-6 text-center">Plinko Game</h2>
+       <div className="w-full lg:w-1/3 space-y-8 bg-gray-50 dark:bg-gray-800 p-10 rounded-2xl shadow-xl mt-8 border-2 border-gray-200 dark:border-gray-700 min-w-[400px]">
+  <h2 className="text-4xl font-bold mb-8 text-center">Plinko Game</h2>
 
-          <div>
-            <Label className="text-sm mb-2 block">Bet Amount (ETH)</Label>
-            <Input
-              type="number"
-              value={betAmount}
-              onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
-              placeholder="0.0001 ETH"
-              className="mb-4 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-            <div className="flex gap-3">
-              <Button
-                variant="secondary"
-                onClick={() => setBetAmount(betAmount * 0.5)}
-                className="flex-1"
-              >
-                /2
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setBetAmount(betAmount * 2)}
-                className="flex-1"
-              >
-                x2
-              </Button>
-            </div>
-          </div>
+  <div className="space-y-4">
+    <Label className="text-lg font-medium block">Bet Amount (ETH)</Label>
+    <Input
+      type="number"
+      value={betAmount}
+      onChange={(e) => setBetAmount(parseFloat(e.target.value) || 0)}
+      placeholder="0.0001 ETH"
+      className="mb-6 px-4 py-3 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+    />
+    <div className="flex gap-4 mb-6">
+      <Button
+        variant="secondary"
+        onClick={() => setBetAmount(betAmount * 0.5)}
+        className="flex-1 py-3 text-lg font-semibold"
+      >
+        /2
+      </Button>
+      <Button
+        variant="secondary"
+        onClick={() => setBetAmount(betAmount * 2)}
+        className="flex-1 py-3 text-lg font-semibold"
+      >
+        x2
+      </Button>
+    </div>
+  </div>
 
-          <Button
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
-            onClick={startGame}
-            disabled={isStartingGame || isWithdrawing || !address}
-          >
-            {!address ? (
-              "Connect Wallet to play"
-            ) : isStartingGame ? (
-              <>
-                <ClipLoader size={20} color="#ffffff" />
-                <span className="ml-2">Starting Game...</span>
-              </>
-            ) : (
-              "Start Game"
-            )}
-          </Button>
+  <Button
+    className="w-full py-4 text-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-lg flex items-center justify-center"
+    onClick={startGame}
+    disabled={isStartingGame || isWithdrawing || !address}
+  >
+    {!address ? (
+      "Connect Wallet to play"
+    ) : isStartingGame ? (
+      <>
+        <ClipLoader size={24} color="#ffffff" />
+        <span className="ml-3">Starting Game...</span>
+      </>
+    ) : (
+      "Start Game"
+    )}
+  </Button>
 
-          <Button
-            className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md flex items-center justify-center"
-            onClick={handleWithdraw}
-            disabled={isWithdrawing || isStartingGame}
-          >
-            {isWithdrawing ? (
-              <>
-                <ClipLoader size={20} color="#ffffff" />
-                <span className="ml-2">Withdrawing...</span>
-              </>
-            ) : (
-              "Withdraw"
-            )}
-          </Button>
+  <Button
+    className="w-full py-4 text-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-lg flex items-center justify-center"
+    onClick={handleWithdraw}
+    disabled={isWithdrawing || isStartingGame}
+  >
+    {isWithdrawing ? (
+      <>
+        <ClipLoader size={24} color="#ffffff" />
+        <span className="ml-3">Withdrawing...</span>
+      </>
+    ) : (
+      "Withdraw"
+    )}
+  </Button>
 
-          {reward !== null && showResult && (
-            <div
-              className={`mt-6 p-4 rounded-lg text-center transition ${
-                multiplier && multiplier > 10
-                  ? "bg-green-500 dark:bg-green-600"
-                  : multiplier === 10
-                  ? "bg-yellow-500 dark:bg-yellow-600"
-                  : "bg-red-500 dark:bg-red-600"
-              }`}
-            >
-              <h3 className="text-xl font-bold">
-                {multiplier && multiplier > 10
-                  ? "Congratulations!"
-                  : multiplier === 10
-                  ? "Break Even"
-                  : "Better Luck Next Time!"}
-              </h3>
-              <p className="text-sm mt-1">
-                {multiplier && multiplier > 10
-                  ? `You won: ${reward.toFixed(8)} ETH`
-                  : multiplier === 10
-                  ? "You broke even."
-                  : `You left with: ${reward.toFixed(8)} ETH`}
-              </p>
-            </div>
-          )}
-        </div>
+  {reward !== null && showResult && (
+    <div
+      className={`mt-8 p-6 rounded-xl text-center transition shadow-lg ${
+        multiplier && multiplier > 10
+          ? "bg-green-500 dark:bg-green-600"
+          : multiplier === 10
+          ? "bg-yellow-500 dark:bg-yellow-600"
+          : "bg-red-500 dark:bg-red-600"
+      }`}
+    >
+      <h3 className="text-2xl font-bold mb-2">
+        {multiplier && multiplier > 10
+          ? "Congratulations!"
+          : multiplier === 10
+          ? "Break Even"
+          : "Better Luck Next Time!"}
+      </h3>
+      <p className="text-lg">
+        {multiplier && multiplier > 10
+          ? `You won: ${reward.toFixed(8)} ETH`
+          : multiplier === 10
+          ? "You broke even."
+          : `You left with: ${reward.toFixed(8)} ETH`}
+      </p>
+    </div>
+  )}
+</div>
+
 
         <div className="flex-1 flex items-center justify-center mt-8">
           <canvas

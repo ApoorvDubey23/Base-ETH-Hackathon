@@ -195,7 +195,12 @@ const DiceGame: React.FC = () => {
             isRolling={isRolling}
             onRoll={rollDice}
             address={address}
+            cashoutAvailable={cashoutAvailable}
+            withdrawableAmount={withdrawableAmount}
+            isWithdrawing={isWithdrawing}
+            cashout={cashout}
           />
+      
         </div>
         {/* Right Column: Dice Display */}
         <div className="flex flex-col items-center justify-center space-y-6">
@@ -207,18 +212,6 @@ const DiceGame: React.FC = () => {
               className="text-game-accent"
             />
           </div>
-          {cashoutAvailable && withdrawableAmount > 0 && (
-            <button
-              onClick={cashout}
-              className="px-6 py-2 bg-blue-500 dark:bg-blue-700 text-white rounded-lg shadow hover:bg-blue-600 dark:hover:bg-blue-800 flex items-center justify-center"
-            >
-              {isWithdrawing ? (
-                <ClipLoader color="#ffffff" size={20} />
-              ) : (
-                `Withdraw ${withdrawableAmount} ETH`
-              )}
-            </button>
-          )}
         </div>
       </div>
     </div>

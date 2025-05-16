@@ -27,7 +27,6 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
     };
 
     const calculateWinChance = () => {
-        // Still showing win chance based on dice probabilities
         if (selectedPrediction === 'under') {
             return Math.max(1, Math.round(((selectedValue - 1) / 6) * 100));
         } else {
@@ -60,15 +59,15 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
     };
 
     return (
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-md">
+        <div className="bg-white dark:bg-gray-900 border border-indigo-400 dark:border-indigo-300 rounded-xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex justify-between items-center mb-6">
                 <Button
                     variant={selectedPrediction === 'under' ? 'default' : 'outline'}
                     className={cn(
                         "flex-1 rounded-r-none border-r-0",
                         selectedPrediction === 'under'
-                            ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-500 dark:text-white"
-                            : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                            ? "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:from-green-600 hover:to-blue-600 dark:from-green-700 dark:to-blue-700"
+                            : "bg-gray-200 dark:bg-gray-800 text-indigo-800 dark:text-indigo-200 hover:bg-gray-300 dark:hover:bg-gray-700 border border-indigo-400 dark:border-indigo-300"
                     )}
                     onClick={() => setSelectedPrediction('under')}
                     disabled={isRolling}
@@ -80,8 +79,8 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
                     className={cn(
                         "flex-1 rounded-l-none",
                         selectedPrediction === 'over'
-                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                            : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                            ? "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:from-green-600 hover:to-blue-600 dark:from-green-700 dark:to-blue-700"
+                            : "bg-gray-200 dark:bg-gray-800 text-indigo-800 dark:text-indigo-200 hover:bg-gray-300 dark:hover:bg-gray-700 border border-indigo-400 dark:border-indigo-300"
                     )}
                     onClick={() => setSelectedPrediction('over')}
                     disabled={isRolling}
@@ -96,8 +95,9 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
                         key={value}
                         variant="outline"
                         className={cn(
-                            "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white border border-gray-300 dark:border-gray-600 text-lg font-medium p-0 h-12",
-                            selectedValue === value && "bg-blue-500 text-white dark:bg-blue-700"
+                            "border border-indigo-400 dark:border-indigo-300 text-lg font-medium p-0 h-12 rounded",
+                            "bg-gray-100 dark:bg-gray-800 text-indigo-800 dark:text-indigo-200 hover:bg-gradient-to-r hover:from-green-500 hover:to-blue-500 hover:text-white",
+                            selectedValue === value && "bg-gradient-to-r from-green-500 to-blue-500 text-white"
                         )}
                         onClick={() => handleValueChange(value)}
                         disabled={isRolling}
@@ -108,12 +108,12 @@ const PredictionSelector: React.FC<PredictionSelectorProps> = ({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-gray-200 dark:bg-gray-700 rounded-lg text-center shadow-sm">
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Win Chance</p>
+                <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-center shadow-lg border border-indigo-400 dark:border-indigo-300">
+                    <p className="text-indigo-800 dark:text-indigo-200 text-sm mb-1">Win Chance</p>
                     <p className="text-gray-900 dark:text-white font-bold text-lg">{calculateWinChance()}%</p>
                 </div>
-                <div className="p-4 bg-gray-200 dark:bg-gray-700 rounded-lg text-center shadow-sm">
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Multiplier</p>
+                <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-center shadow-lg border border-indigo-400 dark:border-indigo-300">
+                    <p className="text-indigo-800 dark:text-indigo-200 text-sm mb-1">Multiplier</p>
                     <p className="text-gray-900 dark:text-white font-bold text-lg">{calculateMultiplier()}x</p>
                 </div>
             </div>

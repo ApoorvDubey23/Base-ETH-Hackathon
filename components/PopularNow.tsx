@@ -17,56 +17,56 @@ const colorClasses: Record<string, {
   linkDarkHover: string;
 }> = {
   blue: {
-    border: "border-blue-200",
-    darkBorder: "dark:border-blue-500/20",
+    border: "border-blue-300",
+    darkBorder: "dark:border-blue-600/30",
     bg: "bg-blue-50",
-    darkBg: "dark:bg-blue-500/10",
+    darkBg: "dark:bg-blue-900",
     iconBg: "bg-blue-100",
-    iconDarkBg: "dark:bg-blue-500/20",
-    iconText: "text-blue-600",
-    iconDarkText: "dark:text-blue-400",
+    iconDarkBg: "dark:bg-blue-800",
+    iconText: "text-blue-700",
+    iconDarkText: "dark:text-blue-300",
     linkText: "text-blue-600",
     linkDarkText: "dark:text-blue-400",
     linkHover: "hover:text-blue-500",
     linkDarkHover: "dark:hover:text-blue-300",
   },
   yellow: {
-    border: "border-yellow-200",
-    darkBorder: "dark:border-yellow-500/20",
+    border: "border-yellow-300",
+    darkBorder: "dark:border-yellow-600/30",
     bg: "bg-yellow-50",
-    darkBg: "dark:bg-yellow-500/10",
+    darkBg: "dark:bg-yellow-900",
     iconBg: "bg-yellow-100",
-    iconDarkBg: "dark:bg-yellow-500/20",
-    iconText: "text-yellow-600",
-    iconDarkText: "dark:text-yellow-400",
+    iconDarkBg: "dark:bg-yellow-800",
+    iconText: "text-yellow-700",
+    iconDarkText: "dark:text-yellow-300",
     linkText: "text-yellow-600",
     linkDarkText: "dark:text-yellow-400",
     linkHover: "hover:text-yellow-500",
     linkDarkHover: "dark:hover:text-yellow-300",
   },
   purple: {
-    border: "border-purple-200",
-    darkBorder: "dark:border-purple-500/20",
+    border: "border-purple-300",
+    darkBorder: "dark:border-purple-600/30",
     bg: "bg-purple-50",
-    darkBg: "dark:bg-purple-500/10",
+    darkBg: "dark:bg-purple-900",
     iconBg: "bg-purple-100",
-    iconDarkBg: "dark:bg-purple-500/20",
-    iconText: "text-purple-600",
-    iconDarkText: "dark:text-purple-400",
+    iconDarkBg: "dark:bg-purple-800",
+    iconText: "text-purple-700",
+    iconDarkText: "dark:text-purple-300",
     linkText: "text-purple-600",
     linkDarkText: "dark:text-purple-400",
     linkHover: "hover:text-purple-500",
     linkDarkHover: "dark:hover:text-purple-300",
   },
   red: {
-    border: "border-red-200",
-    darkBorder: "dark:border-red-500/20",
+    border: "border-red-300",
+    darkBorder: "dark:border-red-600/30",
     bg: "bg-red-50",
-    darkBg: "dark:bg-red-500/10",
+    darkBg: "dark:bg-red-900",
     iconBg: "bg-red-100",
-    iconDarkBg: "dark:bg-red-500/20",
-    iconText: "text-red-600",
-    iconDarkText: "dark:text-red-400",
+    iconDarkBg: "dark:bg-red-800",
+    iconText: "text-red-700",
+    iconDarkText: "dark:text-red-300",
     linkText: "text-red-600",
     linkDarkText: "dark:text-red-400",
     linkHover: "hover:text-red-500",
@@ -108,45 +108,48 @@ const games = [
 const PopularNow: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6 md:p-8 shadow-lg">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
-          <div className="flex items-center space-x-3 mb-4 md:mb-0">
-            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-500/20 flex items-center justify-center">
-              <Dices className="h-5 w-5 text-green-600 dark:text-green-500" />
+      <div className="rounded-xl border border-gray-300 dark:border-gray-600 bg-gradient-to-b from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 shadow-2xl">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 rounded-full bg-green-200 dark:bg-green-700 flex items-center justify-center shadow-md">
+              <Dices className="h-6 w-6 text-green-700 dark:text-green-300" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Popular Now</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Popular Now</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Hot games players are enjoying right now on MetaBet
               </p>
             </div>
           </div>
-          <span className="border border-yellow-500 bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-500 px-3 py-1 rounded-md text-sm font-medium">
-            TRENDING
+          <span className="border border-yellow-500 bg-yellow-100 dark:bg-yellow-700 text-yellow-700 dark:text-yellow-300 px-4 py-1 rounded-full text-sm font-semibold uppercase tracking-wide">
+            Trending
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {games.map((game, index) => {
             const style = colorClasses[game.color];
             return (
-              <div key={index} className={`rounded-lg border ${style.border} ${style.darkBorder} ${style.bg} ${style.darkBg} p-6 shadow-md`}>
-                <div className={`h-12 w-12 rounded-lg ${style.iconBg} ${style.iconDarkBg} flex items-center justify-center mb-4`}>
-                  <span className={`text-2xl font-bold ${style.iconText} ${style.iconDarkText}`}>
+              <div
+                key={index}
+                className={`rounded-xl border ${style.border} ${style.darkBorder} ${style.bg} ${style.darkBg} p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300`}
+              >
+                <div className={`h-14 w-14 rounded-lg ${style.iconBg} ${style.iconDarkBg} flex items-center justify-center mb-4`}>
+                  <span className={`text-3xl font-extrabold ${style.iconText} ${style.iconDarkText}`}>
                     {game.name.charAt(0)}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{game.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{game.description}</p>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{game.name}</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{game.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    <span className="text-green-600 dark:text-green-400">{game.players}</span> playing now
+                    <span className="font-semibold text-green-700 dark:text-green-300">{game.players}</span> playing now
                   </div>
                   <Link
                     href={game.href}
-                    className={`flex items-center text-sm font-medium ${style.linkText} ${style.linkDarkText} ${style.linkHover} ${style.linkDarkHover}`}
+                    className={`flex items-center text-sm font-semibold ${style.linkText} ${style.linkDarkText} ${style.linkHover} ${style.linkDarkHover} transition duration-200`}
                   >
-                    Play <CircleArrowRight className="ml-1 h-4 w-4" />
+                    Play <CircleArrowRight className="ml-1 h-5 w-5" />
                   </Link>
                 </div>
               </div>

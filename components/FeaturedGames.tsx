@@ -10,6 +10,7 @@ const FeaturedGames: React.FC = () => {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
   const games = [
     {
       title: "Limbo",
@@ -38,13 +39,13 @@ const FeaturedGames: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-8 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+    <div className="max-w-screen-2xl mx-auto px-8 py-8 bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-black transition-colors ease-in-out">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4 md:mb-0 drop-shadow-lg">
           Featured Games on MetaBet
         </h2>
         <Button
-          className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 text-sm font-medium transition-colors"
+          className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white dark:from-purple-400 dark:to-indigo-400 hover:opacity-90 transition-all font-semibold py-2 px-4 rounded shadow-md"
           onClick={() => scrollToSection("popular-now")}
         >
           View All Games →
