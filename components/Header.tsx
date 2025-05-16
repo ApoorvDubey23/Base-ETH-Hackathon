@@ -35,8 +35,6 @@ const Header: React.FC = () => {
         <div className="flex items-center space-x-2">
           <ModeToggle />
           <WalletComponents />
-          <Button onClick={()=>getAllSessions()}>GetAllSession</Button>
-          <Button onClick={()=>getUserSessionList()}>getUserSessionList</Button>
         </div>
       </div>
     </header>
