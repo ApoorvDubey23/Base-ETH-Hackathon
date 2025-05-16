@@ -9,6 +9,8 @@ import { ethers } from "ethers";
 import { PlaceBet, Withdraw } from "@/utils/helpers";
 import { CONTRACT_ABI } from "@/lib/contract";
 import { useToast } from "@/contexts/toast/toastContext";
+import { toScientificNotation } from "@/utils/scientificNotation";
+import { ClipLoader } from "react-spinners";
 
 const DiceGame: React.FC = () => {
   const { placeBet, getBalance, address, withdrawWinnigs } =
@@ -36,15 +38,12 @@ const DiceGame: React.FC = () => {
       if (address) {
         const balancevar = await getBalance();
         setBalance(parseFloat(balancevar));
-        console.log("Balance:", balancevar);
       }
     };
     fetchBalance();
   }, [address]);
 
-  const BET_PLACED_EVENT_SIGNATURE = ethers.id(
-    "BetPlaced(uint256,address,uint8,uint256)"
-  );
+
 const rollDice = async () => {
   if (betAmount <= 0) {
     toast.open({
@@ -74,7 +73,6 @@ const rollDice = async () => {
 
   setIsRolling(true);
   setCashoutAvailable(true);
-  setWithdrawableAmount(0);
   setBalance((prev) => prev - betAmount);
 
   let betResult: any;
@@ -116,7 +114,7 @@ const rollDice = async () => {
     payout: number
   ) => {
     setDiceValue(outcome);
-    setWithdrawableAmount(isWin ? payout : 0);
+    setWithdrawableAmount((prev)=> (prev + (isWin ? payout : 0)));
     setTimeout(() => {
       updateGameStats(isWin, payout);
       addToGameHistory(outcome, payout);
@@ -151,7 +149,6 @@ const rollDice = async () => {
     setCashoutAvailable(false);
     setIsRolling(false);
     setSessionId(null);
-    // Reset withdrawable amount after cashout.
     setWithdrawableAmount(0);
   };
 
@@ -163,7 +160,7 @@ const rollDice = async () => {
       toast.open({
         message: {
           heading: "You Won!",
-          content: `You won ${payout}!`,
+          content: `You won ${toScientificNotation(payout)}!`,
         },
         duration: 5000,
         position: "top-center",
@@ -173,7 +170,7 @@ const rollDice = async () => {
       toast.open({
         message: {
           heading: "You Lost!",
-          content: `You lost ${betAmount}!`,
+          content: `You lost ${toScientificNotation(betAmount)}!`,
         },
         duration: 5000,
         position: "top-center",
@@ -238,11 +235,13 @@ const rollDice = async () => {
           {cashoutAvailable && withdrawableAmount > 0 && (
             <button
               onClick={cashout}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 dark:bg-blue-700 text-white rounded-lg shadow-md hover:bg-blue-600 dark:hover:bg-blue-800 flex items-center justify-center"
             >
-             {
-              isWithdrawing ? "Withdrawing" : `Withdraw ${withdrawableAmount} ETH`
-             }
+              {isWithdrawing ? (
+              <ClipLoader color="#ffffff" size={20} />
+              ) : (
+              `Withdraw ${withdrawableAmount} ETH`
+              )}
             </button>
           )}
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { toScientificNotation } from '@/utils/scientificNotation';
 
 interface GameStatsProps {
     balance: number;
@@ -16,7 +17,7 @@ const GameStats: React.FC<GameStatsProps> = ({ balance, totalBets, totalWins, pr
             <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
                 <CardContent className="p-6">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Balance</p>
-                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{balance}</p>
+                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{toScientificNotation(balance)}</p>
                 </CardContent>
             </Card>
             <Card className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md transition-colors duration-300">
@@ -40,7 +41,7 @@ const GameStats: React.FC<GameStatsProps> = ({ balance, totalBets, totalWins, pr
                         }`}
                     >
                         {profit >= 0 ? '+' : ''}
-                        {profit}
+                        {toScientificNotation(profit)}
                     </p>
                 </CardContent>
             </Card>

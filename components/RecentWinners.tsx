@@ -8,6 +8,7 @@ interface Winner {
   game: string;
   amount: string;
   time: string;
+  isWin: boolean;
 }
 
 const gameTypeToLabel = (type: number): string => {
@@ -27,16 +28,17 @@ const RecentPlayers: React.FC = () => {
     const fetchSessions = async () => {
       if (address) {
         try {
-          const sessions = (await getAllSessions()) ?? []; // Ensure sessions is an array
+          const sessions = (await getAllSessions()) ?? []; 
 
           const recentPlayers = sessions
             .map((session: any) => ({
+              isWin: session.isWin,
               username: session.player.slice(0, 6) + '...' + session.player.slice(-4),
               game: gameTypeToLabel(session.game),
               amount: `${toScientificNotation(session.betAmount, 2)} ETH`,
               time: `${Math.floor((Date.now() / 1000 - session.timestamp) / 60)} min ago`,
             }))
-            .slice(0, 10); // Get the most recent 10 sessions
+            .slice(0, 10); 
 
           setPlayers(recentPlayers);
         } catch (error) {
@@ -76,7 +78,7 @@ const RecentPlayers: React.FC = () => {
                       <span className="font-medium text-gray-900 dark:text-white">{player.username}</span>
                     </td>
                     <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{player.game}</td>
-                    <td className="py-4 px-4 font-medium text-yellow-500">{player.amount}</td>
+                    <td className={`py-4 px-4 font-medium ${player.isWin ? 'text-green-500' : 'text-red-500'}`}>{player.amount}</td>
                     <td className="py-4 px-4 text-gray-500 dark:text-gray-400 text-sm">{player.time}</td>
                   </tr>
                 ))}

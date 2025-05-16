@@ -259,27 +259,11 @@ export const useStakeGameFunctions = () => {
       console.log("No sessions found");
       return [];
     }
-    // filter the required data from these sessions , see console for the same , button added in header
     const formatted = sessions.map((session: any) => {
-      console.log({
-        sessionId: typeof Number(session.sessionId),
-        player: typeof session.player,
-        game: typeof Number(session.game), // Convert bigint to number
-        betAmount: typeof Number(ethers.formatEther(session.betAmount)),
-        isWin: typeof session.isWin,
-        payout: typeof Number(ethers.formatEther(session.payout)),
-        isplayed: typeof session.isplayed,
-        isresolved: typeof session.isresolved,
-        timestamp: typeof Number(session.timestamp),
-        betnum: typeof session.betnum,
-        rollu: typeof session.rollu,
-        safeTilesFound: typeof session.safeTilesFound,
-      });
-
-      return {
+          return {
         sessionId: Number(session.sessionId),
         player: session.player,
-        game: Number(session.game), // Convert bigint to number
+        game: Number(session.game),
         betAmount: Number(ethers.formatEther(session.betAmount)),
         isWin: session.isWin,
         payout: Number(ethers.formatEther(session.payout)),
