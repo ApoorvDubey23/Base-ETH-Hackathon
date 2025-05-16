@@ -17,96 +17,165 @@ export const useStakeGameFunctions = () => {
     if (!address) throw new Error("Address not available");
     const provider = new BrowserProvider(window.ethereum);
     const balance = await provider.getBalance(address);
-    return formatEther(balance); // human-readable ETH balance
+    return formatEther(balance); 
   };
 
   const placeBet = async (
-    betValue: number,
-    game: number,
-    betnum?: number,
-    rollu?: boolean
-  ) => {
-    if (!walletClient || !address) {
-      throw new Error("Wallet not connected");
-    }
+  betValue: number,
+  game: number,
+  betnum?: number,
+  rollu?: boolean
+) => {
+  if (!walletClient || !address) {
+    throw new Error("Wallet not connected");
+  }
 
-    const signer = await getSigner();
-    const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+  const signer = await getSigner();
+  const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
 
-    const value = parseEther(betValue.toFixed(18).toString());
+  const value = parseEther(betValue.toFixed(18).toString());
 
-    let tx;
-    if (game === 2) {
-      tx = await contract.placeBet(game, betnum, rollu ?? false, { value });
-    } else if (game === 1) {
-      tx = await contract.placeBet(game, betnum ?? 1, rollu ?? false, {
-        value,
-      });
-    } else {
-      tx = await contract.placeBet(game, 0, false, { value });
-    }
-    const receipt = await tx.wait();
-    return receipt;
-  };
+  let tx;
+  if (game === 2) {
+    tx = await contract.placeBet(game, betnum, rollu ?? false, { value });
+  } else if (game === 1) {
+    tx = await contract.placeBet(game, betnum ?? 1, rollu ?? false, { value });
+  } else {
+    tx = await contract.placeBet(game, 0, false, { value });
+  }
 
-  const getGameResultPlinko = async (sessionId: number) => {
-    const signer = await getSigner();
-    const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+  const receipt = await tx.wait();
 
-    const tx = await contract.plinkoGameResult(sessionId);
-    const receipt = await tx.wait();
+  const iface = new ethers.Interface(CONTRACT_ABI);
 
+  if (game === 0) {
+    // Plinko game result event decoding
     const GAME_RESULT_EVENT_SIG = ethers.id(
       "GameResult(uint256,bool,uint256,uint256,uint8)"
     );
-
-    const log = receipt.logs.find(
-      (log: any) =>
-        log.topics[0].toLowerCase() === GAME_RESULT_EVENT_SIG.toLowerCase()
+    const gameResultLog = receipt.logs.find(
+      (log: any) => log.topics[0].toLowerCase() === GAME_RESULT_EVENT_SIG.toLowerCase()
     );
+    if (!gameResultLog) throw new Error("GameResult event not found");
 
-    if (!log) throw new Error("GameResult event not found in logs");
-
-    const iface = new ethers.Interface(CONTRACT_ABI);
-    const decoded = iface.decodeEventLog("GameResult", log.data, log.topics);
+    const decoded = iface.decodeEventLog(
+      "GameResult",
+      gameResultLog.data,
+      gameResultLog.topics
+    );
+    console.log( {
+      receipt,
+      gameResult: {
+        multiplier1: Number(decoded.multiplier),
+        point: Number(decoded.outcome),
+      },
+    });
+    
 
     return {
-      multiplier1: Number(decoded.multiplier),
-      point: Number(decoded.outcome),
+      receipt,
+      gameResult: {
+        multiplier1: Number(decoded.multiplier),
+        point: Number(decoded.outcome),
+      },
     };
-  };
-
-  const getGameResultDice = async (sessionId: number) => {
-    const signer = await getSigner();
-    const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
-
-    const tx = await contract.DiceGameResult(sessionId);
-    const receipt = await tx.wait();
-
+  } else if (game === 1) {
+    // Dice game result event decoding
     const GAME_RESULT_DICE_SIG = ethers.id(
       "GameResultDice(uint256,bool,uint256,uint256)"
     );
-
-    const log = receipt.logs.find(
-      (log: any) =>
-        log.topics[0].toLowerCase() === GAME_RESULT_DICE_SIG.toLowerCase()
+    const gameResultLog = receipt.logs.find(
+      (log: any) => log.topics[0].toLowerCase() === GAME_RESULT_DICE_SIG.toLowerCase()
     );
+    if (!gameResultLog) throw new Error("GameResultDice event not found");
 
-    if (!log) throw new Error("GameResultDice event not found in logs");
-
-    const iface = new ethers.Interface(CONTRACT_ABI);
     const decoded = iface.decodeEventLog(
       "GameResultDice",
-      log.data,
-      log.topics
+      gameResultLog.data,
+      gameResultLog.topics
     );
+    console.log({
+      receipt,
+      gameResult: {
+        isWin: decoded.isWin,
+        payout: Number(ethers.formatEther(decoded.payout)),
+        outcome: Number(decoded.outcome),
+      },
+    });
+    
 
     return {
-      isWin: decoded.isWin,
-      payout: Number(ethers.formatEther(decoded.payout)),
-      outcome: Number(decoded.outcome),
+      receipt,
+      gameResult: {
+        isWin: decoded.isWin,
+        payout: Number(ethers.formatEther(decoded.payout)),
+        outcome: Number(decoded.outcome),
+      },
     };
-  };
+  }
+
+  return receipt;
+};
+
+
+  // const getGameResultPlinko = async (sessionId: number) => {
+  //   const signer = await getSigner();
+  //   const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+
+  //   const tx = await contract.plinkoGameResult(sessionId);
+  //   const receipt = await tx.wait();
+
+  //   const GAME_RESULT_EVENT_SIG = ethers.id(
+  //     "GameResult(uint256,bool,uint256,uint256,uint8)"
+  //   );
+
+  //   const log = receipt.logs.find(
+  //     (log: any) =>
+  //       log.topics[0].toLowerCase() === GAME_RESULT_EVENT_SIG.toLowerCase()
+  //   );
+
+  //   if (!log) throw new Error("GameResult event not found in logs");
+
+  //   const iface = new ethers.Interface(CONTRACT_ABI);
+  //   const decoded = iface.decodeEventLog("GameResult", log.data, log.topics);
+
+  //   return {
+  //     multiplier1: Number(decoded.multiplier),
+  //     point: Number(decoded.outcome),
+  //   };
+  // };
+
+  // const getGameResultDice = async (sessionId: number) => {
+  //   const signer = await getSigner();
+  //   const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+
+  //   const tx = await contract.DiceGameResult(sessionId);
+  //   const receipt = await tx.wait();
+
+  //   const GAME_RESULT_DICE_SIG = ethers.id(
+  //     "GameResultDice(uint256,bool,uint256,uint256)"
+  //   );
+
+  //   const log = receipt.logs.find(
+  //     (log: any) =>
+  //       log.topics[0].toLowerCase() === GAME_RESULT_DICE_SIG.toLowerCase()
+  //   );
+
+  //   if (!log) throw new Error("GameResultDice event not found in logs");
+
+  //   const iface = new ethers.Interface(CONTRACT_ABI);
+  //   const decoded = iface.decodeEventLog(
+  //     "GameResultDice",
+  //     log.data,
+  //     log.topics
+  //   );
+
+  //   return {
+  //     isWin: decoded.isWin,
+  //     payout: Number(ethers.formatEther(decoded.payout)),
+  //     outcome: Number(decoded.outcome),
+  //   };
+  // };
 
   const playMinesTile = async (sessionId: number) => {
     if (!walletClient || !address) {
@@ -259,8 +328,8 @@ export const useStakeGameFunctions = () => {
 
   return {
     placeBet,
-    getGameResultPlinko,
-    getGameResultDice,
+    // getGameResultPlinko,
+    // getGameResultDice,
     getBalance,
     getSigner,
     address,
