@@ -21,11 +21,12 @@ const gameTypeToLabel = (type: number): string => {
 
 const RecentPlayers: React.FC = () => {
   const [players, setPlayers] = useState<Winner[]>([]);
-  const { getAllSessions } = useStakeGameFunctions();
+  const { getAllSessions, address, } = useStakeGameFunctions();
 
   useEffect(() => {
     const fetchSessions = async () => {
-      try {
+     if(address){
+       try {
         const sessions = (await getAllSessions()) ?? []; // Ensure sessions is an array
 
         const recentPlayers = sessions
@@ -41,10 +42,11 @@ const RecentPlayers: React.FC = () => {
       } catch (error) {
         console.error("Error fetching sessions:", error);
       }
+     }
     };
 
     fetchSessions();
-  }, [getAllSessions]);
+  }, [address,getAllSessions]);
 
   return (
     <div className="container mx-auto px-4 py-8">
