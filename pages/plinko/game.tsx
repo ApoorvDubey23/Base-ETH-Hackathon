@@ -23,12 +23,8 @@ interface BetRecord {
 }
 
 export default function Game() {
-  const {
-    placeBet,
-    getBalance,
-    address,
-    withdrawWinnigs,
-  } = useStakeGameFunctions();
+  const { placeBet, getBalance, address, withdrawWinnigs } =
+    useStakeGameFunctions();
 
   const [ballManager, setBallManager] = useState<BallManager>();
   const [reward, setReward] = useState<number | null>(null);
@@ -43,12 +39,16 @@ export default function Game() {
   const toast = useToast();
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
     if (canvasRef.current) {
       const manager = new BallManager(
         canvasRef.current,
-        theme as "dark" | "light"
+        theme as "dark" | "light",
+        () => {
+          setShowResult(true);
+        }
       );
       setBallManager(manager);
     }
@@ -68,10 +68,7 @@ export default function Game() {
     "BetPlaced(uint256,address,uint8,uint256)"
   );
 
-
-
   const startGame = async () => {
-
     if (betAmount <= 0) {
       toast.open({
         message: {
@@ -99,18 +96,19 @@ export default function Game() {
     }
     setIsStartingGame(true);
     setReward(null);
+    setShowResult(false);
     try {
-      const res =  await PlaceBet(
-      betAmount,
-      placeBet,
-      setSessionId,
-      toast,
-      CONTRACT_ABI,
-      BET_PLACED_EVENT_SIGNATURE,
-      0
-    ) as any;
+      const res = (await PlaceBet(
+        betAmount,
+        placeBet,
+        setSessionId,
+        toast,
+        CONTRACT_ABI,
+        BET_PLACED_EVENT_SIGNATURE,
+        0
+      )) as any;
       console.log("res", res);
-      const {multiplier1,point } = res;
+      const { multiplier1, point } = res;
       if (multiplier1 == null || point == null) {
         toast.open({
           message: {
@@ -120,7 +118,7 @@ export default function Game() {
           duration: 5000,
           position: "top-center",
           color: "error",
-        }); 
+        });
       }
 
       const gameMultiplier = multiplier1 / 10;
@@ -226,26 +224,27 @@ export default function Game() {
             </div>
           </div>
 
-            <Button
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
-              onClick={startGame}
-              disabled={isStartingGame || isWithdrawing || !address}
-            >
-              {!address ? "Connect Wallet to play" :isStartingGame ? (
-                <>
-                  <ClipLoader size={20} color="#ffffff" />
-                  <span className="ml-2">Starting Game...</span>
-                </>
-              ) : (
-                "Start Game"
-              )}
-            </Button>
-         
+          <Button
+            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
+            onClick={startGame}
+            disabled={isStartingGame || isWithdrawing || !address}
+          >
+            {!address ? (
+              "Connect Wallet to play"
+            ) : isStartingGame ? (
+              <>
+                <ClipLoader size={20} color="#ffffff" />
+                <span className="ml-2">Starting Game...</span>
+              </>
+            ) : (
+              "Start Game"
+            )}
+          </Button>
 
           <Button
             className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md flex items-center justify-center"
             onClick={handleWithdraw}
-            disabled={isWithdrawing  || isStartingGame}
+            disabled={isWithdrawing || isStartingGame}
           >
             {isWithdrawing ? (
               <>
@@ -257,7 +256,7 @@ export default function Game() {
             )}
           </Button>
 
-          {reward !== null && (
+          {reward !== null && showResult && (
             <div
               className={`mt-6 p-4 rounded-lg text-center transition ${
                 multiplier && multiplier > 10
