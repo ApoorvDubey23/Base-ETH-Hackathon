@@ -43,7 +43,6 @@ export const useBetHistory = (gameType?: number) => {
                 setBetHistory([]);
                 return;
             }
-            console.log("All Sessions:", allSessions);
 
             const filtered = allSessions.filter((session: BetHistory) => {
                 const matchesUser = session.player.toLowerCase() === address.toLowerCase();

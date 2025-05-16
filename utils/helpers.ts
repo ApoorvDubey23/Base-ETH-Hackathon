@@ -111,7 +111,6 @@ export async function PlaceBet(
     if (game != 2) return (res as BetResult).gameResult;
 
   } catch (error) {
-    console.error("Bet placement failed:", error);
     toast.open({
       message: {
         heading: "Bet Failed",

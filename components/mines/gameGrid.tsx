@@ -14,6 +14,16 @@ interface GameGridProps {
 }
 
 const GameGrid: React.FC<GameGridProps> = ({ grid, gameStarted, handleClick }) => {
+  if (!gameStarted && grid.length === 0) {
+    return (
+      <div className="rounded-lg flex items-center justify-center mt-6 py-2 bg-gray-50 dark:bg-gray-800 h-[90vh] w-full">
+        <span className="text-3xl font-semibold text-gray-800 dark:text-gray-100 capitalize">
+          place a bet and start the game
+        </span>
+      </div>
+    );
+  }
+  
   return (
     <div className="rounded-lg lg:w-3/4 flex items-center justify-center mt-6 py-2 lg:mt-0 bg-gray-50 dark:bg-gray-800 relative h-[90vh]">
       <div

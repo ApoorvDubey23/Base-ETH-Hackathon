@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import HeroBanner from '@/components/HeroBanner';
 import FeaturedGames from '@/components/FeaturedGames';
 import PopularNow from '@/components/PopularNow';
-import RecentWinners from '@/components/RecentWinners';
+import RecentWinners from '@/components/RecentBets';
 import './index.css';
 
 export default function HomePage() {
