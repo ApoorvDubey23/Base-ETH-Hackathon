@@ -149,6 +149,24 @@ export const useStakeGameFunctions = () => {
       receipt,
     };
   };
+  const getAllSessions=async()=>{
+     const signer = await getSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+
+    const sessions = await contract.getAllSessions();
+    // filter the required data from these sessions , see console for the same , button added in header
+    console.log(sessions);
+    
+  }
+  const getUserSessionList = async () => {
+    const signer = await getSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
+
+    const usersessionsArray = await contract.getUserSessions(address);
+
+    console.log(usersessionsArray);
+    
+  }
 
   return {
     placeBet,
@@ -158,5 +176,7 @@ export const useStakeGameFunctions = () => {
     getSigner,
     address,
     withdrawWinnigs,
+    getAllSessions,
+    getUserSessionList,
   };
 };
