@@ -1,10 +1,12 @@
 import { BallManager } from "@/utils/plinko/classes/BallManager";
 import { WIDTH } from "@/utils/plinko/constants";
 import { pad } from "@/utils/plinko/padding";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react"
 
 
 export function Simulation() {
+    const {theme}=useTheme(); 
     const canvasRef = useRef<any>(null);
     let [outputs, setOutputs] = useState<{[key: number]: number[]}>({
         0: [],
@@ -38,7 +40,7 @@ export function Simulation() {
 
     useEffect(() => {
         if (canvasRef.current) {
-            const ballManager = new BallManager(canvasRef.current as unknown as HTMLCanvasElement, (index: number, startX?: number) => {
+            const ballManager = new BallManager(canvasRef.current as unknown as HTMLCanvasElement,theme as "light" |"dark", (index: number, startX?: number) => {
                 setOutputs((outputs: any) => {
                     return {
                         ...outputs,

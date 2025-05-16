@@ -5,8 +5,6 @@ import HeroBanner from '@/components/HeroBanner';
 import FeaturedGames from '@/components/FeaturedGames';
 import PopularNow from '@/components/PopularNow';
 import RecentWinners from '@/components/RecentBets';
-import './index.css';
-
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
