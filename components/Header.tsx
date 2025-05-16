@@ -8,7 +8,7 @@ import { useStakeGameFunctions } from '@/ContractFunctions/functions';
 const Header: React.FC = () => {
   const {getAllSessions,getUserSessionList} = useStakeGameFunctions();
   return (
-    <header className="backdrop-blur-md bg-white/70 dark:bg-black/30 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50 mb-10">
+    <header className="backdrop-blur-md bg-white/70 dark:bg-black/30 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50 mb-6">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <div className="flex items-center space-x-2">
           <Dices className="h-6 w-6 text-purple-600 dark:text-purple-400" />
