@@ -25,7 +25,6 @@ interface BetRecord {
 export default function Game() {
   const {
     placeBet,
-    getGameResultPlinko,
     getBalance,
     address,
     withdrawWinnigs,
@@ -42,7 +41,6 @@ export default function Game() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { theme } = useTheme();
   const toast = useToast();
-  const [isPlacingBet, setIsPlacingBet] = useState(false);
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
@@ -70,33 +68,9 @@ export default function Game() {
     "BetPlaced(uint256,address,uint8,uint256)"
   );
 
-  const handlePlaceBet = async () => {
-    await PlaceBet(
-      betAmount,
-      placeBet,
-      setIsPlacingBet,
-      setSessionId,
-      toast,
-      CONTRACT_ABI,
-      BET_PLACED_EVENT_SIGNATURE,
-      0
-    );
-  };
-  fetchBalance();
+
 
   const startGame = async () => {
-    if (sessionId === null) {
-      toast.open({
-        message: {
-          heading: "No Session",
-          content: "No session found. Please place a bet first.",
-        },
-        duration: 5000,
-        position: "top-center",
-        color: "warning",
-      });
-      return;
-    }
 
     if (betAmount <= 0) {
       toast.open({
@@ -124,8 +98,30 @@ export default function Game() {
       return;
     }
     setIsStartingGame(true);
+    setReward(null);
     try {
-      const { multiplier1, point } = await getGameResultPlinko(sessionId!);
+      const res =  await PlaceBet(
+      betAmount,
+      placeBet,
+      setSessionId,
+      toast,
+      CONTRACT_ABI,
+      BET_PLACED_EVENT_SIGNATURE,
+      0
+    ) as any;
+      console.log("res", res);
+      const {multiplier1,point } = res;
+      if (multiplier1 == null || point == null) {
+        toast.open({
+          message: {
+            heading: "Transaction Failed",
+            content: "Transaction receipt is null.",
+          },
+          duration: 5000,
+          position: "top-center",
+          color: "error",
+        }); 
+      }
 
       const gameMultiplier = multiplier1 / 10;
       setMultiplier(gameMultiplier);
@@ -230,13 +226,12 @@ export default function Game() {
             </div>
           </div>
 
-          {sessionId !== null ? (
             <Button
               className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
               onClick={startGame}
-              disabled={isStartingGame || isPlacingBet || isWithdrawing}
+              disabled={isStartingGame || isWithdrawing || !address}
             >
-              {isStartingGame ? (
+              {!address ? "Connect Wallet to play" :isStartingGame ? (
                 <>
                   <ClipLoader size={20} color="#ffffff" />
                   <span className="ml-2">Starting Game...</span>
@@ -245,27 +240,12 @@ export default function Game() {
                 "Start Game"
               )}
             </Button>
-          ) : (
-            <Button
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition rounded-md flex items-center justify-center"
-              onClick={handlePlaceBet}
-              disabled={isPlacingBet || isStartingGame || isWithdrawing}
-            >
-              {isPlacingBet ? (
-                <>
-                  <ClipLoader size={20} color="#ffffff" />
-                  <span className="ml-2">Placing Bet...</span>
-                </>
-              ) : (
-                "Place Bet"
-              )}
-            </Button>
-          )}
+         
 
           <Button
             className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition rounded-md flex items-center justify-center"
             onClick={handleWithdraw}
-            disabled={isWithdrawing || isPlacingBet || isStartingGame}
+            disabled={isWithdrawing  || isStartingGame}
           >
             {isWithdrawing ? (
               <>

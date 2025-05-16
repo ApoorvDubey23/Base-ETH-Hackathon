@@ -10,10 +10,8 @@ interface BetControlsProps {
     balance: number;
     isRolling: boolean;
     onRoll: () => void;
-    sessionId: number | null;
-    handlePlaceBet: () => void;
-    isPlacingBet: boolean;
     hasPlayed?: boolean;
+    address?: string;
 }
 
 const BetControls: React.FC<BetControlsProps> = ({
@@ -22,10 +20,8 @@ const BetControls: React.FC<BetControlsProps> = ({
     balance,
     isRolling,
     onRoll,
-    sessionId,
-    handlePlaceBet,
-    isPlacingBet,
     hasPlayed,
+    address,
 }) => {
     const handleQuickBet = (multiplier: number) => {
         setBetAmount(betAmount * multiplier);
@@ -75,13 +71,12 @@ const BetControls: React.FC<BetControlsProps> = ({
                 </div>
             </div>
 
-            {sessionId !== null && !hasPlayed? (
                 <Button
                     onClick={onRoll}
-                    disabled={isRolling || isPlacingBet||hasPlayed}
+                    disabled={isRolling ||hasPlayed||!address}
                     className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isRolling ? (
+                    {!address? "Connect Wallet to play" :isRolling ? (
                         <>
                             <ClipLoader size={20} color="#ffffff" />
                             <span className="ml-2">Rolling...</span>
@@ -90,22 +85,7 @@ const BetControls: React.FC<BetControlsProps> = ({
                         "Roll"
                     )}
                 </Button>
-            ) : (
-                <Button
-                    onClick={handlePlaceBet}
-                    disabled={isRolling|| betAmount > balance || isPlacingBet}
-                    className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {isPlacingBet ? (
-                        <>
-                            <ClipLoader size={20} color="#ffffff" />
-                            <span className="ml-2">Placing Bet...</span>
-                        </>
-                    ) : (
-                        "Place Bet"
-                    )}
-                </Button>
-            )}
+            
         </div>
     );
 };

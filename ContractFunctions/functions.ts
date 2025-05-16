@@ -117,7 +117,6 @@ export const useStakeGameFunctions = () => {
   return receipt;
 };
 
-
   // const getGameResultPlinko = async (sessionId: number) => {
   //   const signer = await getSigner();
   //   const contract = new Contract(CONTRACT_ADDRESS!, CONTRACT_ABI, signer);
@@ -254,7 +253,7 @@ export const useStakeGameFunctions = () => {
       CONTRACT_ABI,
       runner
     );
-
+    if(!address || !contract) return [];
     const sessions = await contract.getAllSessions();
     if (!sessions || sessions.length === 0) {
       console.log("No sessions found");

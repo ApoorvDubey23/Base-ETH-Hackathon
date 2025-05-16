@@ -9,6 +9,14 @@ interface Receipt {
   logs: any[];
 }
 
+interface BetResult {
+  receipt: Receipt;
+  gameResult: any;
+}
+
+type PlaceBetResponse = Receipt | BetResult;
+
+
 export async function PlaceBet(
   betAmount: number,
   placeBet: (
@@ -16,8 +24,7 @@ export async function PlaceBet(
     gameType: number,
     betnum?: number,
     rollu?: boolean
-  ) => Promise<Receipt>,
-  setIsPlacingBet: (isPlacing: boolean) => void,
+  ) => Promise<PlaceBetResponse>,
   setSessionId: (sessionId: number) => void,
   toast: any,
   CONTRACT_ABI: any,
@@ -25,7 +32,7 @@ export async function PlaceBet(
   game: number,
   betnum?: number,
   rollu?: boolean
-): Promise<void> {
+): Promise<any> {
   if (betAmount <= 0) {
     toast.open({
       message: {
@@ -38,15 +45,16 @@ export async function PlaceBet(
     });
     return;
   }
-  setIsPlacingBet(true);
   try {
-    let receipt = null;
+    let res = null;
     if (game != 0) {
-      receipt = await placeBet(betAmount, game, betnum, rollu);
+      res = await placeBet(betAmount, game, betnum, rollu);
     } else {
-      receipt = await placeBet(betAmount, game);
+      res = await placeBet(betAmount, game);
     }
 
+    console.log("Transaction Receipt:", res); 
+    const receipt = game == 2 ? (res as Receipt) : ((res as unknown as { receipt: Receipt }).receipt);
     if (!receipt) {
       toast.open({
         message: {
@@ -100,6 +108,8 @@ export async function PlaceBet(
       position: "top-center",
       color: "success",
     });
+    if (game != 2) return (res as BetResult).gameResult;
+
   } catch (error) {
     console.error("Bet placement failed:", error);
     toast.open({
@@ -111,9 +121,7 @@ export async function PlaceBet(
       position: "top-center",
       color: "error",
     });
-  } finally {
-    setIsPlacingBet(false);
-  }
+  } 
 }
 
 export async function Withdraw(
@@ -151,7 +159,7 @@ export async function Withdraw(
 
     setSessionId(null);
   } catch (error: any) {
-    console.error("Withdraw failed:", error);
+    // console.error("Withdraw failed:", error);
     const msg = error?.message?.toLowerCase() || "";
     if (msg.includes("already resolved")) {
       toast.open({

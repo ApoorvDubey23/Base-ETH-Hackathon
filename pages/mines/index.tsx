@@ -55,10 +55,10 @@ const Home: React.FC = () => {
   );
 
   const handlePlaceBet = async () => {
+    setIsPlacingBet(true);
     await PlaceBet(
       betAmount,
       placeBet,
-      setIsPlacingBet,
       setSessionId,
       toast,
       CONTRACT_ABI,
@@ -66,6 +66,8 @@ const Home: React.FC = () => {
       2,
       numMines
     );
+    setIsPlacingBet(false);
+
   };
 
   const generateGrid = (): void => {

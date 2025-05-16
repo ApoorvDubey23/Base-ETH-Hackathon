@@ -11,14 +11,8 @@ import { CONTRACT_ABI } from "@/lib/contract";
 import { useToast } from "@/contexts/toast/toastContext";
 
 const DiceGame: React.FC = () => {
-  const {
-    placeBet,
-    getGameResultDice,
-    getBalance,
-    address,
-    getSigner,
-    withdrawWinnigs,
-  } = useStakeGameFunctions();
+  const { placeBet, getBalance, address, withdrawWinnigs } =
+    useStakeGameFunctions();
 
   const [balance, setBalance] = useState(1000);
   const [sessionId, setSessionId] = useState<number | null>(null);
@@ -31,11 +25,12 @@ const DiceGame: React.FC = () => {
   const [totalWins, setTotalWins] = useState(0);
   const [profit, setProfit] = useState(0);
   const [cashoutAvailable, setCashoutAvailable] = useState(false);
-  const [isPlacingBet, setIsPlacingBet] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
-  const [hasPlayed, setHasPlayed] = useState(false);
+  const [withdrawableAmount, setWithdrawableAmount] = useState(0);
+
   const toast = useToast();
+
   useEffect(() => {
     const fetchBalance = async () => {
       if (address) {
@@ -50,72 +45,78 @@ const DiceGame: React.FC = () => {
   const BET_PLACED_EVENT_SIGNATURE = ethers.id(
     "BetPlaced(uint256,address,uint8,uint256)"
   );
+const rollDice = async () => {
+  if (betAmount <= 0) {
+    toast.open({
+      message: {
+        heading: "Invalid Bet Amount",
+        content: "Please enter a valid bet amount.",
+      },
+      duration: 5000,
+      position: "top-center",
+      color: "warning",
+    });
+    return;
+  }
 
-  const handlePlaceBet = async () => {
-    await PlaceBet(
-      betAmount,
-      placeBet,
-      setIsPlacingBet,
-      setSessionId,
-      toast,
-      CONTRACT_ABI,
-      BET_PLACED_EVENT_SIGNATURE,
-      1,
-      selectedValue,
-      prediction === "over"
-    );
-  };
+  if (betAmount > balance) {
+    toast.open({
+      message: {
+        heading: "Insufficient Balance",
+        content: "You do not have enough balance to place this bet.",
+      },
+      duration: 5000,
+      position: "top-center",
+      color: "warning",
+    });
+    return;
+  }
 
-  const rollDice = async () => {
-    if (betAmount <= 0) {
-      toast.open({
-        message: {
-          heading: "Invalid Bet Amount",
-          content: "Please enter a valid bet amount.",
-        },
-        duration: 5000,
-        position: "top-center",
-        color: "warning",
-      });
-      return;
-    }
+  setIsRolling(true);
+  setCashoutAvailable(true);
+  setWithdrawableAmount(0);
+  setBalance((prev) => prev - betAmount);
 
-    if (betAmount > balance) {
-      toast.open({
-        message: {
-          heading: "Insufficient Balance",
-          content: "You do not have enough balance to place this bet.",
-        },
-        duration: 5000,
-        position: "top-center",
-        color: "warning",
-      });
-      return;
-    }
+  let betResult: any;
+  const betPromise = await PlaceBet(
+    betAmount,
+    placeBet,
+    setSessionId,
+    toast,
+    CONTRACT_ABI,
+    ethers.id("BetPlaced(uint256,address,uint8,uint256)"),
+    1,
+    selectedValue,
+    prediction === "over"
+  ).then((res) => {
+    betResult = res;
+  });
 
-    setIsRolling(true);
-    setCashoutAvailable(true);
-    setBalance((prev) => prev - betAmount);
-    setProfit((prev) => prev - betAmount);
+  const rollDuration = 2000;
+  const startTime = Date.now();
 
-    const rollDuration = 1500;
-    const startTime = Date.now();
-    const rollInterval = setInterval(() => {
-      const randomValue = Math.floor(Math.random() * 6) + 1;
-      setDiceValue(randomValue);
-      if (Date.now() - startTime > rollDuration) {
-        clearInterval(rollInterval);
-        finalizeRoll();
+  const rollInterval = setInterval(async () => {
+    const randomValue = Math.floor(Math.random() * 6) + 1;
+    setDiceValue(randomValue);
+    if (Date.now() - startTime > rollDuration) {
+      clearInterval(rollInterval);
+      if (!betResult) {
+        await betPromise;
       }
-    }, 100);
-    setHasPlayed(true);
-  };
+      const { outcome, isWin, payout } = betResult;
+      finalizeRoll(outcome, isWin, payout);
+    }
+  }, 100);
+};
 
-  const finalizeRoll = async () => {
-    const { isWin, payout, outcome } = await getGameResultDice(sessionId!);
-    console.log("Game Result:", isWin, payout, outcome);
+
+  const finalizeRoll = async (
+    outcome: number,
+    isWin: boolean,
+    payout: number
+  ) => {
     setDiceValue(outcome);
-
+    setWithdrawableAmount(isWin ? payout : 0);
     setTimeout(() => {
       updateGameStats(isWin, payout);
       addToGameHistory(outcome, payout);
@@ -136,7 +137,7 @@ const DiceGame: React.FC = () => {
       });
       return;
     }
-
+    setIsWithdrawing(true);
     await Withdraw(
       sessionId!,
       withdrawWinnigs,
@@ -144,27 +145,17 @@ const DiceGame: React.FC = () => {
       setSessionId,
       toast
     );
-
+    setIsWithdrawing(false);
     const updatedBalance = await getBalance();
     setBalance(parseFloat(updatedBalance));
-
     setCashoutAvailable(false);
     setIsRolling(false);
-
-    toast.open({
-      message: {
-        heading: "Cashout Successful",
-        content: "You cashed out!",
-      },
-      duration: 5000,
-      position: "top-center",
-      color: "success",
-    });
     setSessionId(null);
-    setHasPlayed(false);
+    // Reset withdrawable amount after cashout.
+    setWithdrawableAmount(0);
   };
 
-  const updateGameStats =async (isWin: boolean, payout: number) => {
+  const updateGameStats = async (isWin: boolean, payout: number) => {
     const updatedBalance = await getBalance();
     setBalance(parseFloat(updatedBalance));
     if (isWin) {
@@ -191,7 +182,7 @@ const DiceGame: React.FC = () => {
     }
 
     setTotalBets((prev) => prev + 1);
-    setProfit((prev) => (isWin ? prev + payout - betAmount : prev - betAmount));
+    setProfit((prev) => (isWin ? prev + payout : prev - betAmount));
   };
 
   const addToGameHistory = (diceValue: number, payout: number) => {
@@ -211,13 +202,13 @@ const DiceGame: React.FC = () => {
   return (
     <div className="w-full pb-12 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <div className="mb-8">
-                <GameStats
-                    balance={balance}
-                    totalBets={totalBets}
-                    totalWins={totalWins}
-                    profit={profit}
-                />
-            </div>
+        <GameStats
+          balance={balance}
+          totalBets={totalBets}
+          totalWins={totalWins}
+          profit={profit}
+        />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="flex flex-col items-center space-y-8">
@@ -242,17 +233,16 @@ const DiceGame: React.FC = () => {
             balance={balance}
             isRolling={isRolling}
             onRoll={rollDice}
-            sessionId={sessionId}
-            handlePlaceBet={handlePlaceBet}
-            isPlacingBet={isPlacingBet}
-            hasPlayed={hasPlayed}
+            address={address}
           />
-          {cashoutAvailable && (
+          {cashoutAvailable && withdrawableAmount > 0 && (
             <button
               onClick={cashout}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
             >
-              Cashout
+             {
+              isWithdrawing ? "Withdrawing" : `Withdraw ${withdrawableAmount} ETH`
+             }
             </button>
           )}
         </div>
