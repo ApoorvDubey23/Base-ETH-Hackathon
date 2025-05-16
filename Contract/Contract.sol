@@ -86,6 +86,7 @@ contract StakeGames {
             rollu:false,
              safeTilesFound:0
         });
+        plinkoGameResult(sessionId);
         }
         else if(_game==GameType.Dice){
             sessions[sessionId]=GameSession({
@@ -103,6 +104,7 @@ contract StakeGames {
                 safeTilesFound:0
 
             });
+            DiceGameResult(sessionId);
 
 
         }
@@ -244,7 +246,7 @@ mapping(uint8 => uint256) public minesPerTileIncrement;
 function _initMinesMultipliers() internal {
     for (uint8 mines = 1; mines <= 24; mines++) {
         uint256 safeTiles = 25 - mines;
-        minesPerTileIncrement[mines] = safeTiles > 0 ? 50000 / safeTiles : 0;
+        minesPerTileIncrement[mines] = safeTiles > 0 ? 50000 / safeTiles : 0; // 0.5 max increase split over safe tiles
     }
 }
 
@@ -273,26 +275,30 @@ function _initMinesMultipliers() internal {
         ) % (25 - session.safeTilesFound);
 
         if (rand < safeTilesLeft) {
+            // Safe tile clicked
             session.safeTilesFound++;
 
             uint256 baseMultiplier = 100000; 
           uint256 perTileIncrement = minesPerTileIncrement[session.betnum]; // 0.1 per tile
             uint256 rawMultiplier = baseMultiplier + (uint256(session.safeTilesFound) * perTileIncrement);
 
+            // You can add house edge calculation here if needed
 
             session.payout = (session.betAmount * rawMultiplier) / 100000;
             session.isWin = true;
 
+            // Check if all safe tiles uncovered — game over condition
             if (session.safeTilesFound == 25 - totalMines) {
-                session.isplayed = true; 
+                session.isplayed = true; // Mark game ended
             }
 
             emit GameResult(sessionId, true, session.payout, rawMultiplier, session.safeTilesFound);
             return (false, session.payout);
         } else {
+            // Mine clicked — game over with zero payout
             session.payout = 0;
             session.isWin = false;
-            session.isplayed = true; 
+            session.isplayed = true; // Mark game ended
 
             emit GameResult(sessionId, false, 0, 0, session.safeTilesFound);
             return (true, 0);

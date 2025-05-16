@@ -2,6 +2,7 @@ import React from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "@/components/ui/button";
 import { reset } from "viem/actions";
+import { toScientificNotation } from "@/utils/scientificNotation";
 
 interface SidebarProps {
   balance: string;
@@ -120,10 +121,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Multiplier Display */}
       <div className="flex flex-col justify-center w-full gap-2 px-4 py-16 space-y-2 font-semibold bg-gray-50 dark:bg-gray-900 rounded-lg shadow-md h-1/5">
         <span className="block text-2xl text-gray-500 dark:text-gray-300">
-          Current Multiplier
+          Reward Per Tile Revealed
         </span>
-        <span className="flex items-center justify-center text-5xl font-bold text-indigo-600 dark:text-indigo-300">
-          x{multiplier!.toFixed(2)}
+        <span className="flex items-center justify-center text-3xl font-bold text-indigo-600 dark:text-indigo-300">
+          {toScientificNotation(((0.5 / (25-numMines))*betAmount))} ETH
         </span>
       </div>
       {sessionId !== null ? (
