@@ -14,6 +14,7 @@ import { useToast } from "@/contexts/toast/toastContext";
 import { ClipLoader } from "react-spinners";
 import Footer from "@/components/Footer";
 import { PlaceBet, Withdraw } from "@/utils/helpers";
+import BetHistory from "@/components/BetHistory";
 
 interface BetRecord {
   sessionId: number;
@@ -294,37 +295,11 @@ export default function Game() {
         </div>
       </div>
       {/* Bet History Section */}
-      <div className="mt-8 w-[80%] bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex itmes-center justify-center mx-auto flex-col mb-10">
+      <div className="mt-8 w-[80%] bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center mx-auto flex-col mb-10">
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
           Bet History
         </h2>
-        {betHistory.length > 0 ? (
-          <ul className="space-y-4">
-            {betHistory.map((record) => (
-              <li
-                key={record.sessionId}
-                className="p-4 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700"
-              >
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
-                  Session ID: {record.sessionId}
-                </p>
-                <p className="text-gray-800 dark:text-gray-200">
-                  Bet Amount: {record.betAmount} ETH
-                </p>
-                <p className="text-gray-800 dark:text-gray-200">
-                  Multiplier: {record.multiplier}
-                </p>
-                <p className="text-gray-800 dark:text-gray-200">
-                  Reward: {record.reward.toFixed(8)} ETH
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-center text-gray-800 dark:text-gray-200">
-            No bet history yet.
-          </p>
-        )}
+        <BetHistory gameType={0} />
       </div>
       <Footer />
     </div>

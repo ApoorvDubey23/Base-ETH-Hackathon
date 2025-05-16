@@ -280,17 +280,20 @@ export const useStakeGameFunctions = () => {
     // console.log("hello");
     return formatted;
   };
+
   const getUserSessionList = async () => {
     const signer = await getSigner();
+    const runner = signer ? signer : new BrowserProvider(window.ethereum);
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS!,
       CONTRACT_ABI,
-      signer
+      runner
     );
+    if(!address || !contract) return [];
 
     const usersessionsArray = await contract.getUserSessions(address);
-
-    console.log(usersessionsArray);
+    // console.log(usersessionsArray);
+    return usersessionsArray;
   };
 
   //   const swapFunction=async()=>{

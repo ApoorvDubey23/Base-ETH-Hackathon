@@ -10,6 +10,7 @@ import { CONTRACT_ABI } from "@/lib/contract";
 import GameGrid from "@/components/mines/gameGrid";
 import Sidebar from "@/components/mines/SIdebar";
 import { reset } from "viem/actions";
+import BetHistory from "@/components/BetHistory";
 
 type CellType = "mine" | "diamond" | "empty";
 
@@ -181,6 +182,12 @@ const Home: React.FC = () => {
           gameStarted={gameStarted}
           handleClick={handleClick}
         />
+      </div>
+      <div className="mt-8 w-[80%] bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center mx-auto flex-col mb-10">
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
+          Bet History
+        </h2>
+        <BetHistory gameType={2} />
       </div>
     </div>
   );
