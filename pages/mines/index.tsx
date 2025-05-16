@@ -78,6 +78,7 @@ const Home: React.FC = () => {
   };
 
   const handleClick = async (row: number, col: number) => {
+     setMultiplier((prev)=> prev!+ 0.5/(25-numMines));
     const { isWin, payout, multiplier, safeTilesFound } = await playMinesTile(
       sessionId!
     );
@@ -94,7 +95,7 @@ const Home: React.FC = () => {
       return newGrid;
     });
     setReward(payout);
-    setMultiplier(multiplier);
+   
 
     if (isWin) {
       setWithdrawableAmount((prev) => prev + payout);
