@@ -2,6 +2,7 @@ import { useAccount, useWalletClient } from "wagmi";
 import { Contract, BrowserProvider, parseEther, formatEther } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/contract";
 import {ethers} from "ethers";
+// import { encodeActions, Swap } from '@uniswap/v4-sdk'
 export const useStakeGameFunctions = () => {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -35,7 +36,10 @@ export const useStakeGameFunctions = () => {
     const value = parseEther(betValue.toFixed(18).toString());
 
     let tx;
-    if (game === 1) {
+    if(game===2){
+      tx=await contract.placeBet(game,betnum,rollu??false,{value})
+    }
+    else if (game === 1) {
       tx = await contract.placeBet(game, betnum ?? 1, rollu ?? false, { value });
     } else {
       tx = await contract.placeBet(game, 0, false, { value });
@@ -167,6 +171,22 @@ export const useStakeGameFunctions = () => {
     console.log(usersessionsArray);
     
   }
+
+//   const swapFunction=async()=>{
+//     const swapAction: Swap = {
+//   type: 'swapExactInputSingle',
+//   tokenIn: tokenInAddress,
+//   tokenOut: tokenOutAddress,
+//   amountIn: amountIn,            // BigInt or ethers.BigNumber
+//   amountOutMinimum: amountOutMin, // slippage protection
+//   recipient: userAddress,
+//   deadline: deadlineTimestamp
+// }
+// const calldata = encodeActions([swapAction]);
+// const tx = await routerContract.execute(calldata, { value: amountInForETH });
+// await tx.wait();
+
+//   }
 
   return {
     placeBet,
