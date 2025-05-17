@@ -13,12 +13,6 @@ const FeaturedGames: React.FC = () => {
 
   const games = [
     {
-      title: "Limbo",
-      description: "Test your luck to see how high the multiplier will climb.",
-      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKUVrcnBCdZVgf3mf9kUaxMIJofW4sVxhPIA&s",
-      link: "/limbo"
-    },
-    {
       title: "Plinko",
       description: "Watch the ball cascade through pins for exciting multipliers.",
       imageUrl: "https://photosnow.org/wp-content/uploads/2025/02/Play-Plinko-at-Non-UK-Licensed-Casinos.jpg",

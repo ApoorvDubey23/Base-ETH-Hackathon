@@ -24,11 +24,6 @@ const Footer: React.FC = () => {
             <h4 className="font-bold text-gray-800 dark:text-white mb-4">Games</h4>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li>
-                <Link href="/limbo" className="hover:text-gray-800 dark:hover:text-white transition-colors">
-                  Limbo
-                </Link>
-              </li>
-              <li>
                 <Link href="/plinko" className="hover:text-gray-800 dark:hover:text-white transition-colors">
                   Plinko
                 </Link>

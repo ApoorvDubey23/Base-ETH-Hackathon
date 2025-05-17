@@ -25,7 +25,7 @@ const HeroBanner: React.FC = () => {
             Welcome to <span className="bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent">MetaBet</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-800 dark:text-gray-200 max-w-lg drop-shadow-sm">
-            Play our exclusive games including Limbo, Plinko, Dice, and Mines to win big rewards instantly!
+            Play our exclusive games including Plinko, Dice, and Mines to win big rewards instantly!
           </p>
           <div className="pt-4 flex flex-wrap gap-4">
             <Button

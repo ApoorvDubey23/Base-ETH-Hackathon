@@ -83,13 +83,6 @@ const games = [
     href: "/plinko",
   },
   {
-    name: "Limbo",
-    description: "How high will the multiplier climb? Test your luck.",
-    color: "yellow",
-    players: "3,271",
-    href: "/limbo",
-  },
-  {
     name: "Dice",
     description: "Predict your rolls and win big in this classic dice game.",
     color: "purple",

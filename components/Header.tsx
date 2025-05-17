@@ -15,9 +15,6 @@ const Header: React.FC = () => {
         </div>
 
         <nav className="hidden md:flex items-center space-x-4">
-          <Link href="/limbo" className="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400">
-            Limbo
-          </Link>
           <Link href="/plinko" className="nav-link text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400">
             Plinko
           </Link>
