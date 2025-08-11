@@ -3,15 +3,13 @@ import React from 'react';
 import Link from 'next/link';
 import { Dices } from "lucide-react";
 import { ModeToggle } from './toggleTheme';
+import Image from 'next/image';
 const Header: React.FC = () => {
   return (
     <header className="backdrop-blur-md bg-white/70 dark:bg-black/30 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50 mb-6">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <div className="flex items-center space-x-2">
-          <Dices className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-            MetaBet
-          </Link>
+         <Image src={"/logo.png"} alt="Logo" width={50} height={50} className="h-10 w-10 rounded-full" />
         </div>
 
         <nav className="hidden md:flex items-center space-x-4">
